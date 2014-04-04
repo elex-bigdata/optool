@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * Author: liqiang
@@ -31,6 +33,9 @@ public class ADSearchServlet extends HttpServlet {
     }
 
     private void countHit(HttpServletRequest req, HttpServletResponse resp){
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
         String startTime = req.getParameter("startTime");
         String endTime = req.getParameter("endTime");
         String nation = req.getParameter("nation");
@@ -41,10 +46,21 @@ public class ADSearchServlet extends HttpServlet {
 
         System.out.println(startTime + " : " + endTime + " : " + nation + " : " + pid);
 
+        long start = 0;
+        long end = 0;
+        try {
+            start = sdf.parse(startTime).getTime();
+            end = sdf.parse(startTime).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+
         ADSearchService service = new ADSearchService();
         try {
-            String result = service.countHit(tableName,Integer.parseInt(pid),Long.parseLong(startTime),Long.parseLong(endTime),nation.toLowerCase());
-            int count = service.count(tableName,Integer.parseInt(pid),Long.parseLong(startTime),Long.parseLong(endTime),nation.toLowerCase());
+            String result = service.countHit(tableName,Integer.parseInt(pid),start,end,nation);
+            int count = service.count(tableName,Integer.parseInt(pid),start,end,nation);
             PrintWriter pw = new PrintWriter(resp.getOutputStream());
             pw.write(result + ",total:" + count);
             pw.close();
