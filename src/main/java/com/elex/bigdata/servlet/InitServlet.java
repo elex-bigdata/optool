@@ -14,6 +14,7 @@ public class InitServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        //HBaseUtil.init();
+        System.out.println("----init HbaseUtil----");
+        HBaseUtil.init();
     }
 }
