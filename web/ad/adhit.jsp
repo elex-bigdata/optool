@@ -55,8 +55,8 @@
             return;
         }
 
-        if(startTime <= endTime){
-            alert("开始时间不能小于结束时间");
+        if(startTime >= endTime){
+            alert("开始时间不能大于结束时间");
             return ;
         }
 
