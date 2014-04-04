@@ -1,6 +1,8 @@
 package com.elex.bigdata.servlet;
 
 import com.elex.bigdata.service.ADSearchService;
+import com.elex.bigdata.util.MetricMapping;
+import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 /**
  * Author: liqiang
@@ -28,8 +31,22 @@ public class ADSearchServlet extends HttpServlet {
 
         if("hit".equals(req.getParameter("action"))){
             countHit(req,resp);
+        }else if("prj".equals(req.getParameter("action"))){
+            getProject(resp);
         }
 
+    }
+
+    private void getProject(HttpServletResponse resp){
+        Map<String,Byte> projects = MetricMapping.getInstance().getAllProjectShortNameMapping();
+        String result = new Gson().toJson(projects);
+        try {
+            PrintWriter pw = new PrintWriter(resp.getOutputStream());
+            pw.write(result);
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void countHit(HttpServletRequest req, HttpServletResponse resp){
