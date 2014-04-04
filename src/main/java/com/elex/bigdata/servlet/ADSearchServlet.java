@@ -43,7 +43,6 @@ public class ADSearchServlet extends HttpServlet {
 
         String tableName = "ad_all_log";
 
-
         System.out.println(startTime + " : " + endTime + " : " + nation + " : " + pid);
 
         long start = 0;
