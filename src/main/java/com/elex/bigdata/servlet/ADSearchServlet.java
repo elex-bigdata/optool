@@ -38,12 +38,13 @@ public class ADSearchServlet extends HttpServlet {
 
         String tableName = "ad_all_log";
 
+
         System.out.println(startTime + " : " + endTime + " : " + nation + " : " + pid);
 
         ADSearchService service = new ADSearchService();
         try {
-            String result = service.countHit(tableName,Integer.parseInt(pid),Long.parseLong(startTime),Long.parseLong(endTime),nation.toUpperCase());
-            int count = service.count(tableName,Integer.parseInt(pid),Long.parseLong(startTime),Long.parseLong(endTime),nation.toUpperCase());
+            String result = service.countHit(tableName,Integer.parseInt(pid),Long.parseLong(startTime),Long.parseLong(endTime),nation.toLowerCase());
+            int count = service.count(tableName,Integer.parseInt(pid),Long.parseLong(startTime),Long.parseLong(endTime),nation.toLowerCase());
             PrintWriter pw = new PrintWriter(resp.getOutputStream());
             pw.write(result + ",total:" + count);
             pw.close();
