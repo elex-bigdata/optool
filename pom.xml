@@ -32,6 +32,7 @@
                 <version>2.1.1</version>
                 <configuration>
                     <webXml>web/WEB-INF/web.xml</webXml>
+                    <webappDirectory>web</webappDirectory>
                 </configuration>
             </plugin>
         </plugins>
