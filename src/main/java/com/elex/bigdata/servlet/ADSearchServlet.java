@@ -49,7 +49,7 @@ public class ADSearchServlet extends HttpServlet {
         long end = 0;
         try {
             start = sdf.parse(startTime).getTime();
-            end = sdf.parse(startTime).getTime();
+            end = sdf.parse(endTime).getTime();
         } catch (ParseException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
