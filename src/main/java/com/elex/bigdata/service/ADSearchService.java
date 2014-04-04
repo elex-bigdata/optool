@@ -29,6 +29,8 @@ public class ADSearchService {
             byte[][] startStopRow = getStartStopRow(pid,startTime,endTime,nation);
             scan.setStartRow(startStopRow[0]);
             scan.setStopRow(startStopRow[1]);
+            System.out.println(startStopRow[0]);
+            System.out.println(startStopRow[0]);
             scan.setCaching(1000);
 
             ResultScanner rs = hTable.getScanner(scan);
@@ -88,6 +90,8 @@ public class ADSearchService {
     private byte[][] getStartStopRow(int pid, Long startTime, Long endTime, String nation){
         byte[] startRow = Bytes.add(new byte[]{(byte)pid},Bytes.toBytes(nation),Bytes.toBytes(startTime));
         byte[] stopRow = Bytes.add(new byte[]{(byte)pid},Bytes.toBytes(nation),Bytes.toBytes(endTime));
+        System.out.println(Bytes.toString(startRow));
+        System.out.println(Bytes.toString(stopRow));
         return new byte[][]{startRow,stopRow};
     }
 
