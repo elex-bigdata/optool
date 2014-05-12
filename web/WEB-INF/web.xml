@@ -16,7 +16,18 @@
         <servlet-name>ADServlet</servlet-name>
         <url-pattern>/ad</url-pattern>
     </servlet-mapping>
-    
+
+    <servlet>
+        <servlet-name>OPServlet</servlet-name>
+        <servlet-class>com.elex.bigdata.servlet.OpServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OPServlet</servlet-name>
+        <url-pattern>/op</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>InitServlet</servlet-name>
         <servlet-class>com.elex.bigdata.servlet.InitServlet</servlet-class>

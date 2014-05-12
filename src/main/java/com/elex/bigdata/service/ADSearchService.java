@@ -27,8 +27,6 @@ public class ADSearchService {
 
             scan.addFamily(cf);
             byte[][] startStopRow = getStartStopRow(pid,startTime,endTime,nation);
-/*            scan.setStartRow(Bytes.add(new byte[]{(byte)pid},Bytes.toBytes(nation),Bytes.toBytes(startTime)));
-            scan.setStopRow(Bytes.add(new byte[]{(byte)pid},Bytes.toBytes(nation),Bytes.toBytes(endTime)));*/
             scan.setStartRow(startStopRow[0]);
             scan.setStopRow(startStopRow[1]);
             scan.setCaching(1000);

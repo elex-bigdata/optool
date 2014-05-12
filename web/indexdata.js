@@ -5,9 +5,16 @@
 	]
     },
     { text: '工具箱', isexpand: false, children: [
-		{ url: "demos/filter/filter.htm", text: "转换工具" }
+		{ url: "op/uid.jsp", text: "UID转换" }
 	]
     },
+    { text: '系统检测', isexpand: false, children: [
+        { url: "op/drill.jsp", text: "系统自检" },
+        { url: "op/drill.jsp", text: "Drill" },
+        { url: "op/dataloader.jsp", text: "DataLoder" },
+        { url: "op/internet.jsp", text: "Internet" }
+    ]
+    }
 ];
 
 
