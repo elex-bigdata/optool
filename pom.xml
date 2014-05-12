@@ -104,9 +104,9 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql-connector-java</groupId>
+            <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.23</version>
+            <version>5.1.18</version>
         </dependency>
 
         <dependency>
