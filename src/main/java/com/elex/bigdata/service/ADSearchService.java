@@ -71,6 +71,7 @@ public class ADSearchService {
             scan.setStopRow(startStopRow[1]);
             scan.setFilter(new KeyOnlyFilter());
             scan.setCaching(1000);
+            scan.setTimeRange(startTime,endTime);
 
             ResultScanner rs = hTable.getScanner(scan);
             int count = 0;
