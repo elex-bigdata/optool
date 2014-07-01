@@ -1,6 +1,7 @@
 package com.elex.bigdata.service;
 
 import com.elex.bigdata.hbase.HBaseUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -30,6 +31,7 @@ public class ADSearchService {
             scan.setStartRow(startStopRow[0]);
             scan.setStopRow(startStopRow[1]);
             scan.setCaching(1000);
+            scan.setTimeRange(startTime,endTime);
 
 
             ResultScanner rs = hTable.getScanner(scan);
@@ -89,8 +91,16 @@ public class ADSearchService {
     private byte[][] getStartStopRow(int pid, Long startTime, Long endTime, String nation){
         //Bytes.add(new byte[]{pid},Bytes.toBytes("BR"),Bytes.toBytes(start))
         System.out.println(startTime + " : " + endTime + " : " + nation + " : " + pid);
-        byte[] startRow = Bytes.add(new byte[]{(byte)pid},Bytes.toBytes(nation),Bytes.toBytes(startTime));
-        byte[] stopRow = Bytes.add(new byte[]{(byte)pid},Bytes.toBytes(nation),Bytes.toBytes(endTime));
+        byte[] startRow = null;
+        byte[] stopRow = null;
+        if(StringUtils.isBlank(nation)){
+            startRow = new byte[]{(byte)pid};
+            stopRow = new byte[]{(byte)(pid+1)};
+        }else{
+            startRow = Bytes.add(new byte[]{(byte)pid},Bytes.toBytes(nation),Bytes.toBytes(startTime));
+            stopRow = Bytes.add(new byte[]{(byte)pid},Bytes.toBytes(nation),Bytes.toBytes(endTime));
+        }
+
 
         return new byte[][]{startRow,stopRow};
     }
