@@ -50,10 +50,10 @@
             return;
         }
 
-        if(!nation){
+/*        if(!nation){
             alert("国家不能为空");
             return;
-        }
+        }*/
 
         if(startTime >= endTime){
             alert("开始时间不能大于结束时间");
