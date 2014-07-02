@@ -2,6 +2,7 @@ package com.elex.bigdata.service;
 
 import com.elex.bigdata.hbase.HBaseUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -25,6 +26,7 @@ public class ADSearchService {
             byte[] a = Bytes.toBytes("a");
             byte[] b = Bytes.toBytes("b");
             byte[] c = Bytes.toBytes("c");
+            byte[] t = Bytes.toBytes("t");
 
             scan.addFamily(cf);
             byte[][] startStopRow = getStartStopRow(pid,startTime,endTime,nation);
@@ -38,18 +40,34 @@ public class ADSearchService {
             int hit = 0;
             int miss = 0;
             int ab = 0;
+            //0，未指定 1，游戏 2，电商 99，其他
             for (Result r : rs) {
-                int game = Bytes.toInt(r.getColumnLatest(cf,a).getValue());
-                int shop = Bytes.toInt(r.getColumnLatest(cf,b).getValue());
+                KeyValue kv = r.getColumnLatest(cf,t);
                 int cat = Bytes.toInt(r.getColumnLatest(cf,c).getValue());
+                if(kv == null){
+                    int game = Bytes.toInt(r.getColumnLatest(cf,a).getValue());
+                    int shop = Bytes.toInt(r.getColumnLatest(cf,b).getValue());
 
-                if(game == shop){
-                    ab++;
-                }else if((game > shop && cat == 1) || (game < shop && cat == 2) ){
-                    hit ++;
+                    if(game == shop){
+                        ab++;
+                    }else if((game > shop && cat == 1) || (game < shop && cat == 2) ){
+                        hit ++;
+                    }else{
+                        miss ++;
+                    }
                 }else{
-                    miss ++;
+                    //b.19,a.21,z.60 a.游戏 b.电商 z.未知
+                    String tStr = Bytes.toString(r.getColumnLatest(cf,t).getValue());
+                    if(("a".equals(tStr) && cat ==1) || ("b".equals(tStr) && cat == 2)){
+                        hit ++;
+                    }else if("z".equals(tStr)){
+                        ab ++;
+                    }else{
+                        miss ++;
+                    }
                 }
+
+
             }
             return "ab:" + ab + ", hit:" + hit + ", miss:" + miss ;
         }catch (Exception e){
