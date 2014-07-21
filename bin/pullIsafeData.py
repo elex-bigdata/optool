@@ -6,7 +6,7 @@ import time
 from email.mime.text import MIMEText
 import Queue
 import threading
-import os
+import sys
 
 #ref : organic / banner/ adwords /
 #groupby : ref1 / version / nation / language / os / geoip
@@ -31,7 +31,7 @@ mail_pass = "22C1NziwxZI5F"
 
 queue = Queue.Queue()
 
-with open(os.getcwd()+"/params.txt") as f:
+with open(sys.path[0]+"/params.txt") as f:
     params = f.read()
 
 class myThread (threading.Thread):
