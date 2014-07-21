@@ -1,0 +1,442 @@
+import datetime
+import smtplib
+import json
+import urllib
+import time
+from email.mime.text import MIMEText
+import Queue
+import threading
+
+#ref : organic / banner/ adwords /
+#groupby : ref1 / version / nation / language / os / geoip
+
+refs = ["organic","banner","adwords"]
+groupbys = ["ref1","language","os","version","geoip"]
+
+#refs = ["adwords"]
+#groupbys = ["ref1"]
+
+#datetime.datetime.now().strftime('%b-%d-%y %H:%M:%S');
+today = datetime.date.today()
+day1 = (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+day2 = (today - datetime.timedelta(days=2)).strftime('%Y-%m-%d')
+day6 = (today - datetime.timedelta(days=6)).strftime('%Y-%m-%d')
+#,"liuqixing@elex-tech.com"
+mailto_list = ["liqiang@xingcloud.com","liuqixing@elex-tech.com"]
+mail_host = "smtp.qq.com"
+mail_user = "xamonitor@xingcloud.com"
+mail_pass = "22C1NziwxZI5F"
+#day1 day1 ref ref groupby day1 day1 ref ref groupby ref ref groupby ref ref groupby day2 day2 ref ref groupby ref ref groupby day6 day6
+
+queue = Queue.Queue()
+
+with open("params.txt") as f:
+    params = f.read()
+
+class myThread (threading.Thread):
+    def __init__(self, ref, groupby):
+        threading.Thread.__init__(self)
+        self.threadID = ref+"_"+groupby
+        self.ref = ref
+        self.groupby = groupby
+
+    def run(self):
+        line = params%(day1,day1,self.ref,self.ref,self.groupby,day1,day1,self.ref,self.ref,self.groupby,self.ref,self.ref,self.groupby,self.ref,
+                       self.ref,self.groupby,day2,day2,self.ref,self.ref,self.groupby,self.ref,self.ref,self.groupby,day6,day6)
+        url = "http://69.28.58.61:8082/dd/query?pagesize=100&params=" + line #urllib.quote(line)
+
+        global queue
+        try:
+            res = self.queryData(url)
+            while "pending" in res:
+                time.sleep(1*60)
+                print "retry %s %s"%(self.ref,self.groupby)
+                res = self.queryData(url)
+
+            jstr = json.loads(res)
+            result = self.parseData(jstr["datas"])
+            queue.put(result)
+        except Exception, e:
+            print str(e)
+            print "error for ",self.ref,self.groupby
+
+    def parseData(self,datas):
+        global queue
+        kv = {}
+        data2map = {}
+        for data in datas:
+            nv = data[1]["new"]
+            if not isinstance(nv, int):
+                nv = -1
+            kv[data[0]] = nv
+            data2map[data[0]] = data[1]
+
+        sortedData = sorted(kv.items(), key=lambda d:d[1], reverse=True)
+
+        content = self.ref+self.groupby + ':<div class="'+self.ref+'" >'
+        content += "<table>"
+        content += "<tr><td colspan='5'>%s %s</td></tr>"%(self.ref,self.groupby)
+        content += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n"%("","new","uninstall","2day","6day")
+
+        for sd in sortedData:
+            data = data2map[sd[0]]
+            day2percent = data["2day"]
+            if isinstance(day2percent, float):
+                day2percent = str(day2percent*100) + "%"
+            day6percent = data["6day"]
+            if isinstance(day6percent, float):
+                day6percent = str(day6percent*100) + "%"
+
+            content += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n"%(sd[0],data["new"],data["uninstall"],day2percent,day6percent)
+        content +="</table></br></div>"
+
+        queue.put(content)
+
+    def queryData(slef, url):
+        page = urllib.urlopen(url)
+        res = page.read()
+        page.close()
+        return res
+
+
+
+def sendMail(content):
+    me="xamonitor@xingcloud.com"
+    msg = MIMEText(content, _subtype='html', _charset='gb2312')
+    msg['Subject'] = "sof-isafe " + day1
+    msg['From'] = "xamonitor@xingcloud.com"
+    msg['To'] = ";".join(mailto_list)
+    try:
+        s = smtplib.SMTP()
+        s.connect(mail_host)
+        s.login(mail_user,mail_pass)
+        s.sendmail(me, mailto_list, msg.as_string())
+        s.close()
+        return True
+    except Exception, e:
+        print str(e)
+        return False
+
+print "Start at ", datetime.datetime.now()
+thread_list = list();
+for ref in refs:
+    for groupby in groupbys:
+        print ref, groupby, datetime.datetime.now()
+        thread_list.append(myThread(ref,groupby))
+
+for thread in thread_list:
+    thread.start()
+
+for thread in thread_list:
+    thread.join()
+
+contentmap = {}
+mailcontent = ""
+css = """
+<style>
+.organic {
+	margin:0px;padding:0px;
+	width:600px;
+	box-shadow: 10px 10px 5px #888888;
+	border:1px solid #000000;
+
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}.organic table{
+    border-collapse: collapse;
+        border-spacing: 0;
+	width:100%;
+	height:100%;
+	margin:0px;padding:0px;
+}.organic tr:last-child td:last-child {
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+}
+.organic table tr:first-child td:first-child {
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}
+.organic table tr:first-child td:last-child {
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+}.organic tr:last-child td:first-child{
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+}.organic tr:hover td{
+
+}
+.organic tr:nth-child(odd){ background-color:#ffc9c9; }
+.organic tr:nth-child(even)    { background-color:#ffffff; }.organic td{
+	vertical-align:middle;
+
+
+	border:1px solid #000000;
+	border-width:0px 1px 1px 0px;
+	text-align:left;
+	padding:7px;
+	font-size:16px;
+	font-family:Arial;
+	font-weight:bold;
+	color:#000000;
+}.organic tr:last-child td{
+	border-width:0px 1px 0px 0px;
+}.organic tr td:last-child{
+	border-width:0px 0px 1px 0px;
+}.organic tr:last-child td:last-child{
+	border-width:0px 0px 0px 0px;
+}
+.organic tr:first-child td{
+		background:-o-linear-gradient(bottom, #ff0000 5%, #ff0000 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #ff0000) );
+	background:-moz-linear-gradient( center top, #ff0000 5%, #ff0000 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff0000", endColorstr="#ff0000");	background: -o-linear-gradient(top,#ff0000,ff0000);
+
+	background-color:#ff0000;
+	border:0px solid #000000;
+	text-align:center;
+	border-width:0px 0px 1px 1px;
+	font-size:18px;
+	font-family:Arial;
+	font-weight:bold;
+	color:#ffffff;
+}
+.organic tr:first-child:hover td{
+	background:-o-linear-gradient(bottom, #ff0000 5%, #ff0000 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #ff0000) );
+	background:-moz-linear-gradient( center top, #ff0000 5%, #ff0000 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff0000", endColorstr="#ff0000");	background: -o-linear-gradient(top,#ff0000,ff0000);
+
+	background-color:#ff0000;
+}
+.organic tr:first-child td:first-child{
+	border-width:0px 0px 1px 0px;
+}
+.organic tr:first-child td:last-child{
+	border-width:0px 0px 1px 1px;
+}
+.banner {
+	margin:0px;padding:0px;
+	width:600px;
+	box-shadow: 10px 10px 5px #888888;
+	border:1px solid #000000;
+
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}.banner table{
+    border-collapse: collapse;
+        border-spacing: 0;
+	width:100%;
+	height:100%;
+	margin:0px;padding:0px;
+}.banner tr:last-child td:last-child {
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+}
+.banner table tr:first-child td:first-child {
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}
+.banner table tr:first-child td:last-child {
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+}.banner tr:last-child td:first-child{
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+}.banner tr:hover td{
+
+}
+.banner tr:nth-child(odd){ background-color:#aad4ff; }
+.banner tr:nth-child(even)    { background-color:#ffffff; }.banner td{
+	vertical-align:middle;
+
+
+	border:1px solid #000000;
+	border-width:0px 1px 1px 0px;
+	text-align:left;
+	padding:7px;
+	font-size:16px;
+	font-family:Arial;
+	font-weight:normal;
+	color:#000000;
+}.banner tr:last-child td{
+	border-width:0px 1px 0px 0px;
+}.banner tr td:last-child{
+	border-width:0px 0px 1px 0px;
+}.banner tr:last-child td:last-child{
+	border-width:0px 0px 0px 0px;
+}
+.banner tr:first-child td{
+		background:-o-linear-gradient(bottom, #005fbf 5%, #003f7f 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #005fbf), color-stop(1, #003f7f) );
+	background:-moz-linear-gradient( center top, #005fbf 5%, #003f7f 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#005fbf", endColorstr="#003f7f");	background: -o-linear-gradient(top,#005fbf,003f7f);
+
+	background-color:#005fbf;
+	border:0px solid #000000;
+	text-align:center;
+	border-width:0px 0px 1px 1px;
+	font-size:18px;
+	font-family:Arial;
+	font-weight:bold;
+	color:#ffffff;
+}
+.banner tr:first-child:hover td{
+	background:-o-linear-gradient(bottom, #005fbf 5%, #003f7f 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #005fbf), color-stop(1, #003f7f) );
+	background:-moz-linear-gradient( center top, #005fbf 5%, #003f7f 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#005fbf", endColorstr="#003f7f");	background: -o-linear-gradient(top,#005fbf,003f7f);
+
+	background-color:#005fbf;
+}
+.banner tr:first-child td:first-child{
+	border-width:0px 0px 1px 0px;
+}
+.banner tr:first-child td:last-child{
+	border-width:0px 0px 1px 1px;
+}
+.adwords {
+	margin:0px;padding:0px;
+	width:600px;
+	box-shadow: 10px 10px 5px #888888;
+	border:1px solid #3f7f00;
+
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}.adwords table{
+    border-collapse: collapse;
+        border-spacing: 0;
+	width:100%;
+	height:100%;
+	margin:0px;padding:0px;
+}.adwords tr:last-child td:last-child {
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+}
+.adwords table tr:first-child td:first-child {
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}
+.adwords table tr:first-child td:last-child {
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+}.adwords tr:last-child td:first-child{
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+}.adwords tr:hover td{
+
+}
+.adwords tr:nth-child(odd){ background-color:#d4ffaa; }
+.adwords tr:nth-child(even)    { background-color:#ffffff; }.adwords td{
+	vertical-align:middle;
+
+
+	border:1px solid #3f7f00;
+	border-width:0px 1px 1px 0px;
+	text-align:left;
+	padding:7px;
+	font-size:16px;
+	font-family:Arial;
+	font-weight:normal;
+	color:#000000;
+}.adwords tr:last-child td{
+	border-width:0px 1px 0px 0px;
+}.adwords tr td:last-child{
+	border-width:0px 0px 1px 0px;
+}.adwords tr:last-child td:last-child{
+	border-width:0px 0px 0px 0px;
+}
+.adwords tr:first-child td{
+		background:-o-linear-gradient(bottom, #5fbf00 5%, #3f7f00 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #5fbf00), color-stop(1, #3f7f00) );
+	background:-moz-linear-gradient( center top, #5fbf00 5%, #3f7f00 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#5fbf00", endColorstr="#3f7f00");	background: -o-linear-gradient(top,#5fbf00,3f7f00);
+
+	background-color:#5fbf00;
+	border:0px solid #3f7f00;
+	text-align:center;
+	border-width:0px 0px 1px 1px;
+	font-size:18px;
+	font-family:Arial;
+	font-weight:bold;
+	color:#ffffff;
+}
+.adwords tr:first-child:hover td{
+	background:-o-linear-gradient(bottom, #5fbf00 5%, #3f7f00 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #5fbf00), color-stop(1, #3f7f00) );
+	background:-moz-linear-gradient( center top, #5fbf00 5%, #3f7f00 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#5fbf00", endColorstr="#3f7f00");	background: -o-linear-gradient(top,#5fbf00,3f7f00);
+
+	background-color:#5fbf00;
+}
+.adwords tr:first-child td:first-child{
+	border-width:0px 0px 1px 0px;
+}
+.adwords tr:first-child td:last-child{
+	border-width:0px 0px 1px 1px;
+}
+</style>
+"""
+
+while not queue.empty():
+    xx = queue.get()
+    if xx:
+        i = xx.index(":")
+        contentmap[xx[0:i]] = xx[i+1:]
+
+mailcontent += css
+mailcontent += '<div>'
+for ref in refs:
+    for groupby in groupbys:
+        mailcontent += contentmap[ref+groupby]
+mailcontent += '</div>'
+
+if not mailcontent:
+    mailcontent = "error"
+
+sendMail(mailcontent)
+print "End at ", datetime.datetime.now()
