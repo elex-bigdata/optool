@@ -73,10 +73,10 @@ class myThread (threading.Thread):
 
         sortedData = sorted(kv.items(), key=lambda d:d[1], reverse=True)
 
-        content = self.ref+self.groupby + ':<div class="'+self.ref+'" >'
-        content += "<table>"
-        content += "<tr><td colspan='5'>%s %s</td></tr>"%(self.ref,self.groupby)
-        content += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n"%("","new","uninstall","2day","6day")
+        content = self.ref+self.groupby + ':<div>'
+        content += "<table style='border: 1px solid'>"
+        content += "<tr><td colspan='5' style='border:1px solid'>%s %s</td></tr>"%(self.ref,self.groupby)
+        content += "<tr><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td></tr>\n"%("","new","uninstall","2day","6day")
 
         for sd in sortedData:
             data = data2map[sd[0]]
@@ -87,7 +87,7 @@ class myThread (threading.Thread):
             if isinstance(day6percent, float):
                 day6percent = str(day6percent*100) + "%"
 
-            content += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n"%(sd[0],data["new"],data["uninstall"],day2percent,day6percent)
+            content += "<tr><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td></tr>\n"%(sd[0],data["new"],data["uninstall"],day2percent,day6percent)
         content +="</table></br></div>"
 
         queue.put(content)
@@ -132,295 +132,6 @@ for thread in thread_list:
 
 contentmap = {}
 mailcontent = ""
-css = """
-<style>
-.organic {
-	margin:0px;padding:0px;
-	width:600px;
-	box-shadow: 10px 10px 5px #888888;
-	border:1px solid #000000;
-
-	-moz-border-radius-bottomleft:0px;
-	-webkit-border-bottom-left-radius:0px;
-	border-bottom-left-radius:0px;
-
-	-moz-border-radius-bottomright:0px;
-	-webkit-border-bottom-right-radius:0px;
-	border-bottom-right-radius:0px;
-
-	-moz-border-radius-topright:0px;
-	-webkit-border-top-right-radius:0px;
-	border-top-right-radius:0px;
-
-	-moz-border-radius-topleft:0px;
-	-webkit-border-top-left-radius:0px;
-	border-top-left-radius:0px;
-}.organic table{
-    border-collapse: collapse;
-        border-spacing: 0;
-	width:100%;
-	height:100%;
-	margin:0px;padding:0px;
-}.organic tr:last-child td:last-child {
-	-moz-border-radius-bottomright:0px;
-	-webkit-border-bottom-right-radius:0px;
-	border-bottom-right-radius:0px;
-}
-.organic table tr:first-child td:first-child {
-	-moz-border-radius-topleft:0px;
-	-webkit-border-top-left-radius:0px;
-	border-top-left-radius:0px;
-}
-.organic table tr:first-child td:last-child {
-	-moz-border-radius-topright:0px;
-	-webkit-border-top-right-radius:0px;
-	border-top-right-radius:0px;
-}.organic tr:last-child td:first-child{
-	-moz-border-radius-bottomleft:0px;
-	-webkit-border-bottom-left-radius:0px;
-	border-bottom-left-radius:0px;
-}.organic tr:hover td{
-
-}
-.organic tr:nth-child(odd){ background-color:#ffc9c9; }
-.organic tr:nth-child(even)    { background-color:#ffffff; }.organic td{
-	vertical-align:middle;
-
-
-	border:1px solid #000000;
-	border-width:0px 1px 1px 0px;
-	text-align:left;
-	padding:7px;
-	font-size:16px;
-	font-family:Arial;
-	font-weight:bold;
-	color:#000000;
-}.organic tr:last-child td{
-	border-width:0px 1px 0px 0px;
-}.organic tr td:last-child{
-	border-width:0px 0px 1px 0px;
-}.organic tr:last-child td:last-child{
-	border-width:0px 0px 0px 0px;
-}
-.organic tr:first-child td{
-		background:-o-linear-gradient(bottom, #ff0000 5%, #ff0000 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #ff0000) );
-	background:-moz-linear-gradient( center top, #ff0000 5%, #ff0000 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff0000", endColorstr="#ff0000");	background: -o-linear-gradient(top,#ff0000,ff0000);
-
-	background-color:#ff0000;
-	border:0px solid #000000;
-	text-align:center;
-	border-width:0px 0px 1px 1px;
-	font-size:18px;
-	font-family:Arial;
-	font-weight:bold;
-	color:#ffffff;
-}
-.organic tr:first-child:hover td{
-	background:-o-linear-gradient(bottom, #ff0000 5%, #ff0000 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #ff0000) );
-	background:-moz-linear-gradient( center top, #ff0000 5%, #ff0000 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff0000", endColorstr="#ff0000");	background: -o-linear-gradient(top,#ff0000,ff0000);
-
-	background-color:#ff0000;
-}
-.organic tr:first-child td:first-child{
-	border-width:0px 0px 1px 0px;
-}
-.organic tr:first-child td:last-child{
-	border-width:0px 0px 1px 1px;
-}
-.banner {
-	margin:0px;padding:0px;
-	width:600px;
-	box-shadow: 10px 10px 5px #888888;
-	border:1px solid #000000;
-
-	-moz-border-radius-bottomleft:0px;
-	-webkit-border-bottom-left-radius:0px;
-	border-bottom-left-radius:0px;
-
-	-moz-border-radius-bottomright:0px;
-	-webkit-border-bottom-right-radius:0px;
-	border-bottom-right-radius:0px;
-
-	-moz-border-radius-topright:0px;
-	-webkit-border-top-right-radius:0px;
-	border-top-right-radius:0px;
-
-	-moz-border-radius-topleft:0px;
-	-webkit-border-top-left-radius:0px;
-	border-top-left-radius:0px;
-}.banner table{
-    border-collapse: collapse;
-        border-spacing: 0;
-	width:100%;
-	height:100%;
-	margin:0px;padding:0px;
-}.banner tr:last-child td:last-child {
-	-moz-border-radius-bottomright:0px;
-	-webkit-border-bottom-right-radius:0px;
-	border-bottom-right-radius:0px;
-}
-.banner table tr:first-child td:first-child {
-	-moz-border-radius-topleft:0px;
-	-webkit-border-top-left-radius:0px;
-	border-top-left-radius:0px;
-}
-.banner table tr:first-child td:last-child {
-	-moz-border-radius-topright:0px;
-	-webkit-border-top-right-radius:0px;
-	border-top-right-radius:0px;
-}.banner tr:last-child td:first-child{
-	-moz-border-radius-bottomleft:0px;
-	-webkit-border-bottom-left-radius:0px;
-	border-bottom-left-radius:0px;
-}.banner tr:hover td{
-
-}
-.banner tr:nth-child(odd){ background-color:#aad4ff; }
-.banner tr:nth-child(even)    { background-color:#ffffff; }.banner td{
-	vertical-align:middle;
-
-
-	border:1px solid #000000;
-	border-width:0px 1px 1px 0px;
-	text-align:left;
-	padding:7px;
-	font-size:16px;
-	font-family:Arial;
-	font-weight:normal;
-	color:#000000;
-}.banner tr:last-child td{
-	border-width:0px 1px 0px 0px;
-}.banner tr td:last-child{
-	border-width:0px 0px 1px 0px;
-}.banner tr:last-child td:last-child{
-	border-width:0px 0px 0px 0px;
-}
-.banner tr:first-child td{
-		background:-o-linear-gradient(bottom, #005fbf 5%, #003f7f 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #005fbf), color-stop(1, #003f7f) );
-	background:-moz-linear-gradient( center top, #005fbf 5%, #003f7f 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#005fbf", endColorstr="#003f7f");	background: -o-linear-gradient(top,#005fbf,003f7f);
-
-	background-color:#005fbf;
-	border:0px solid #000000;
-	text-align:center;
-	border-width:0px 0px 1px 1px;
-	font-size:18px;
-	font-family:Arial;
-	font-weight:bold;
-	color:#ffffff;
-}
-.banner tr:first-child:hover td{
-	background:-o-linear-gradient(bottom, #005fbf 5%, #003f7f 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #005fbf), color-stop(1, #003f7f) );
-	background:-moz-linear-gradient( center top, #005fbf 5%, #003f7f 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#005fbf", endColorstr="#003f7f");	background: -o-linear-gradient(top,#005fbf,003f7f);
-
-	background-color:#005fbf;
-}
-.banner tr:first-child td:first-child{
-	border-width:0px 0px 1px 0px;
-}
-.banner tr:first-child td:last-child{
-	border-width:0px 0px 1px 1px;
-}
-.adwords {
-	margin:0px;padding:0px;
-	width:600px;
-	box-shadow: 10px 10px 5px #888888;
-	border:1px solid #3f7f00;
-
-	-moz-border-radius-bottomleft:0px;
-	-webkit-border-bottom-left-radius:0px;
-	border-bottom-left-radius:0px;
-
-	-moz-border-radius-bottomright:0px;
-	-webkit-border-bottom-right-radius:0px;
-	border-bottom-right-radius:0px;
-
-	-moz-border-radius-topright:0px;
-	-webkit-border-top-right-radius:0px;
-	border-top-right-radius:0px;
-
-	-moz-border-radius-topleft:0px;
-	-webkit-border-top-left-radius:0px;
-	border-top-left-radius:0px;
-}.adwords table{
-    border-collapse: collapse;
-        border-spacing: 0;
-	width:100%;
-	height:100%;
-	margin:0px;padding:0px;
-}.adwords tr:last-child td:last-child {
-	-moz-border-radius-bottomright:0px;
-	-webkit-border-bottom-right-radius:0px;
-	border-bottom-right-radius:0px;
-}
-.adwords table tr:first-child td:first-child {
-	-moz-border-radius-topleft:0px;
-	-webkit-border-top-left-radius:0px;
-	border-top-left-radius:0px;
-}
-.adwords table tr:first-child td:last-child {
-	-moz-border-radius-topright:0px;
-	-webkit-border-top-right-radius:0px;
-	border-top-right-radius:0px;
-}.adwords tr:last-child td:first-child{
-	-moz-border-radius-bottomleft:0px;
-	-webkit-border-bottom-left-radius:0px;
-	border-bottom-left-radius:0px;
-}.adwords tr:hover td{
-
-}
-.adwords tr:nth-child(odd){ background-color:#d4ffaa; }
-.adwords tr:nth-child(even)    { background-color:#ffffff; }.adwords td{
-	vertical-align:middle;
-
-
-	border:1px solid #3f7f00;
-	border-width:0px 1px 1px 0px;
-	text-align:left;
-	padding:7px;
-	font-size:16px;
-	font-family:Arial;
-	font-weight:normal;
-	color:#000000;
-}.adwords tr:last-child td{
-	border-width:0px 1px 0px 0px;
-}.adwords tr td:last-child{
-	border-width:0px 0px 1px 0px;
-}.adwords tr:last-child td:last-child{
-	border-width:0px 0px 0px 0px;
-}
-.adwords tr:first-child td{
-		background:-o-linear-gradient(bottom, #5fbf00 5%, #3f7f00 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #5fbf00), color-stop(1, #3f7f00) );
-	background:-moz-linear-gradient( center top, #5fbf00 5%, #3f7f00 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#5fbf00", endColorstr="#3f7f00");	background: -o-linear-gradient(top,#5fbf00,3f7f00);
-
-	background-color:#5fbf00;
-	border:0px solid #3f7f00;
-	text-align:center;
-	border-width:0px 0px 1px 1px;
-	font-size:18px;
-	font-family:Arial;
-	font-weight:bold;
-	color:#ffffff;
-}
-.adwords tr:first-child:hover td{
-	background:-o-linear-gradient(bottom, #5fbf00 5%, #3f7f00 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #5fbf00), color-stop(1, #3f7f00) );
-	background:-moz-linear-gradient( center top, #5fbf00 5%, #3f7f00 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#5fbf00", endColorstr="#3f7f00");	background: -o-linear-gradient(top,#5fbf00,3f7f00);
-
-	background-color:#5fbf00;
-}
-.adwords tr:first-child td:first-child{
-	border-width:0px 0px 1px 0px;
-}
-.adwords tr:first-child td:last-child{
-	border-width:0px 0px 1px 1px;
-}
-</style>
-"""
 
 while not queue.empty():
     xx = queue.get()
@@ -428,7 +139,6 @@ while not queue.empty():
         i = xx.index(":")
         contentmap[xx[0:i]] = xx[i+1:]
 
-mailcontent += css
 mailcontent += '<div>'
 for ref in refs:
     for groupby in groupbys:
