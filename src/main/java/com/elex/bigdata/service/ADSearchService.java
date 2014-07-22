@@ -10,6 +10,9 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Author: liqiang
  * Date: 14-4-3
@@ -26,7 +29,13 @@ public class ADSearchService {
             byte[] a = Bytes.toBytes("a");
             byte[] b = Bytes.toBytes("b");
             byte[] c = Bytes.toBytes("c");
+            byte[] d = Bytes.toBytes("d");
             byte[] t = Bytes.toBytes("t");
+
+            Map<String,Integer> catMap = new HashMap<String,Integer>();
+            catMap.put("a",1);
+            catMap.put("b",2);
+            catMap.put("d",4);
 
             scan.addFamily(cf);
             byte[][] startStopRow = getStartStopRow(pid,startTime,endTime,nation);
@@ -47,16 +56,18 @@ public class ADSearchService {
                 if(kv == null){
                     int game = Bytes.toInt(r.getColumnLatest(cf,a).getValue());
                     int shop = Bytes.toInt(r.getColumnLatest(cf,b).getValue());
+                    int social = Bytes.toInt(r.getColumnLatest(cf,d).getValue());
 
-                    if(game == shop){
-                        ab++;
-                    }else if((game > shop && cat == 1) || (game < shop && cat == 2) ){
+                    String max = game > shop ?  (game > social ? "a" : "d") : (shop > social ? "b" : "d") ;
+
+                    if(catMap.get(max) == cat){
                         hit ++;
                     }else{
-                        miss ++;
+                        miss++;
                     }
+
                 }else{
-                    //b.19,a.21,z.60 a.游戏 b.电商 z.未知
+                    //b.19,a.21,z.60 a.游戏 b.电商 d. z.未知
                     String tStr = Bytes.toString(r.getColumnLatest(cf,t).getValue());
                     if(("a".equals(tStr) && cat ==1) || ("b".equals(tStr) && cat == 2)){
                         hit ++;
