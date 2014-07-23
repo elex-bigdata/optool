@@ -11,12 +11,13 @@ import java.io.IOException;
  * Date: 14-6-6
  * Time: 下午4:01
  */
-public class ProjectCombineMapper extends Mapper<Text,Text,Text,IntWritable>{
+public class ProjectCombineMapper extends Mapper<Text,Text,Text,Text>{
 
     private IntWritable count = new IntWritable(1);
 
     @Override
     protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
-        context.write(value,count);
+        //key = uid value = month
+        context.write(value,key);
     }
 }

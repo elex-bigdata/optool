@@ -3,7 +3,6 @@ package com.elex.ba.main;
 import com.elex.ba.job.LoadHBaseUIDJob;
 import com.elex.ba.job.ProjectCombineJob;
 import com.elex.ba.job.UIDCombineJob;
-import com.elex.bigdata.job.QuartorJob;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;

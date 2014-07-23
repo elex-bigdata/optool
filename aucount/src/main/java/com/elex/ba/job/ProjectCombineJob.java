@@ -45,7 +45,7 @@ public class ProjectCombineJob {
         Job job = new Job(conf,"pcombine_" + project);
         job.setJarByClass(ProjectCombineJob.class);
         job.setMapperClass(ProjectCombineMapper.class);
-        job.setCombinerClass(ProjectCombineReducer.class);
+//        job.setCombinerClass(ProjectCombineReducer.class);
         job.setReducerClass(ProjectCombineReducer.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputKeyClass(Text.class);

@@ -5,23 +5,25 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Author: liqiang
  * Date: 14-6-6
  * Time: 下午6:51
  */
-public class ProjectCombineReducer extends Reducer<Text,IntWritable,Text,IntWritable> {
+public class ProjectCombineReducer extends Reducer<Text,Text,Text,IntWritable> {
 
     @Override
-    protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-        Iterator<IntWritable> iter =  values.iterator();
+    protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+        //key= month value=uid
 
-        int count = 0;
-        while(iter.hasNext()){
-            count += iter.next().get();
+        Set<String> uid = new HashSet<String>();
+        for(Text id : values){
+            uid.add(id.toString());
         }
-        context.write(key,new IntWritable(count));
+        context.write(key,new IntWritable(uid.size()));
     }
 }
