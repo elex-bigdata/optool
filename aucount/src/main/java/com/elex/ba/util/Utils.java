@@ -10,7 +10,7 @@ public class Utils {
     public static long transformerUID(byte[] hashUID){
         int offset = 5;
         byte[] newBytes = new byte[offset];
-        System.arraycopy(hashUID, 1, newBytes, 0, offset);
+        System.arraycopy(hashUID, 0, newBytes, 0, offset);
         long samplingUid = 0;
         for (int i = 0; i < offset; i++) {
             samplingUid <<= 8;
