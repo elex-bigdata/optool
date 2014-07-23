@@ -23,7 +23,7 @@ public class LoadHBaseUIDMapper extends TableMapper<Text,Text> {
         try{
             String m = Bytes.toStringBinary(Bytes.head(key.get(), 6)); //月份
             long uid = Utils.transformerUID(Bytes.tail(key.get(),5)); //将HBASE uid转换为 samplingUID ，将与MYSQL ID 做关联
-            context.write(new Text(String.valueOf(uid)),new Text(Constants.mau_month_prefix));
+            context.write(new Text(String.valueOf(uid)),new Text(Constants.mau_month_prefix + m));
         } catch (Exception e) {
             e.printStackTrace();
         }
