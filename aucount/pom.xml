@@ -39,7 +39,7 @@
 
                     <archive>
                         <manifest>
-                            <mainClass>com.elex.bigdata.main.Main</mainClass>
+                            <mainClass>com.elex.ba.main.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -74,6 +74,12 @@
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-0.94.6.xingcloud.1.0</artifactId>
             <version>0.94.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.1</version>
         </dependency>
     </dependencies>
 
