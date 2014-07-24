@@ -11,6 +11,8 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -43,7 +45,7 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
 
     public int run(String pid) throws IOException, ClassNotFoundException, InterruptedException {
         byte[] table = Bytes.toBytes("deu_" + pid);
-        Path outputpath = new Path(Utils.getHBaseUIDPath(date,node,pid));
+        Path outputpath = new Path(Utils.getHBaseUIDPath(date, node, pid));
         Scan scan = new Scan();
 
         scan.setStartRow(Bytes.toBytes(timeRange[0] + "visit"));
@@ -62,6 +64,8 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         Job job = new Job(conf,node + "_" + pid);
         job.setJarByClass(LoadHBaseUIDJob.class);
         TableMapReduceUtil.initTableMapperJob(table, scan, LoadHBaseUIDMapper.class, Text.class, Text.class, job);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
         job.setCombinerClass(LoadHBaseUIDReducer.class);
         job.setReducerClass(LoadHBaseUIDReducer.class);
         job.setOutputKeyClass(Text.class);
