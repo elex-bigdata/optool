@@ -48,10 +48,12 @@ public class Main {
 //        loadHBaseUID(allpids);
 
         //combie UID
-        new UIDCombineJob(allpids).call();
+//        new UIDCombineJob(allpids).call();
+        uidCombine(allpids);
 
         //combie Project
-        new ProjectCombineJob(projects);
+//        new ProjectCombineJob(projects);
+        projectCombine(projects);
 
         System.out.println("end analyze , spend " + (System.currentTimeMillis() - begin) );
 
@@ -78,5 +80,41 @@ public class Main {
         System.out.println("count finished");
     }
 
+    public static void uidCombine(Set<String> projects){
+        ExecutorService service = new ThreadPoolExecutor(16,20,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+        List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
+        for(String project : projects){
+            tasks.add(service.submit(new UIDCombineJob(project)));
+        }
 
+        for(Future f : tasks){
+            try {
+                f.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        service.shutdown();
+        System.out.println("count finished");
+    }
+
+    public static void projectCombine(Map<String,Set<String>> projects){
+        ExecutorService service = new ThreadPoolExecutor(16,20,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+        List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
+        for(String p : projects.keySet()){
+            tasks.add(service.submit(new ProjectCombineJob(p,projects.get(p))));
+        }
+
+        for(Future f : tasks){
+            try {
+                f.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        service.shutdown();
+        System.out.println("count finished");
+    }
 }

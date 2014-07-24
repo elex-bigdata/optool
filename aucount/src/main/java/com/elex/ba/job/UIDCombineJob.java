@@ -12,7 +12,7 @@ import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * Author: liqiang
@@ -20,13 +20,13 @@ import java.util.Set;
  * Date: 14-6-7
  * Time: 上午10:35
  */
-public class UIDCombineJob {
+public class UIDCombineJob implements Callable<Integer> {
 
-    private Set<String> projects;
+//    private Set<String> projects;
+    private String project;
 
-
-    public UIDCombineJob(Set<String> projects){
-        this.projects = projects;
+    public UIDCombineJob(String project){
+        this.project = project;
     }
 
     public int run(String project) throws IOException, ClassNotFoundException, InterruptedException {
@@ -74,18 +74,18 @@ public class UIDCombineJob {
     }
 
     public Integer call()  {
-        for(String p : projects){
+//        for(String p : projects){
 
             try {
-                if(run(p) == 0){
-                    System.out.println(" " + p + " success");
+                if(run(project) == 0){
+                    System.out.println(" " + project + " success");
                 }else{
-                    System.out.println(" " + p + " fail");
+                    System.out.println(" " + project + " fail");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+//        }
         return 1;
     }
 }

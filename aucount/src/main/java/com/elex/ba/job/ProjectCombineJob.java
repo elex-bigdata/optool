@@ -19,22 +19,25 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * Author: liqiang
  * Date: 14-6-7
  * Time: 上午10:35
  */
-public class ProjectCombineJob {
+public class ProjectCombineJob implements Callable<Integer> {
 
-    private Map<String,Set<String>> projects;
+    private String project ;
+    private Set<String> pids;
 
 
-    public ProjectCombineJob(Map<String,Set<String>>  projects){
-        this.projects = projects;
+    public ProjectCombineJob(String project, Set<String> pids){
+        this.project = project;
+        this.pids = pids;
     }
 
-    public int run(String project, Set<String> pids) throws IOException, ClassNotFoundException, InterruptedException {
+    public int run() throws IOException, ClassNotFoundException, InterruptedException {
         Path outputpath = new Path("/user/hadoop/offline/combine/" + project);
 
 
@@ -75,17 +78,14 @@ public class ProjectCombineJob {
     }
 
     public Integer call()  {
-        for(String p : projects.keySet()){
-
-            try {
-                if(run(p,projects.get(p)) == 0){
-                    System.out.println(" " + p + " success");
-                }else{
-                    System.out.println(" " + p + " fail");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            if(run() == 0){
+                System.out.println(" " + project + " success");
+            }else{
+                System.out.println(" " + project + " fail");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return 1;
     }
