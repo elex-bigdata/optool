@@ -25,12 +25,13 @@ public class Main {
     public static void  main(String[] args) throws Exception {
 
         System.out.println(args.length + " - " + args[0]);
-        if(args.length != 1){
-            System.err.println("Usage : date");
+        if(args.length != 2){
+            System.err.println("Usage : date type");
             System.exit(-1);
         }
 
         String date =  args[0];
+        String type = args[1];
 
         long begin = System.currentTimeMillis();
         System.out.println("begin analyze");
@@ -57,17 +58,21 @@ public class Main {
             projects.put(kv.getKey(), pids);
             allpids.addAll(pids);
         }
-        //load UID
-        loadHBaseUID(date, allpids);
+        if("hbase".equals(type)){
+            //load UID
+            loadHBaseUID(date, allpids);
+        }else if("trans".equals(type)){
+            //combie UID
+            uidCombine(date, allpids);
+        }else if("comb".equals(type)){
 
-        //combie UID
-        uidCombine(date, allpids);
+            //combie Project
+            projectCombine(date, projects);
+        }else if("count".equals(type)){
+            //count
+            projectCount(date, projects.keySet());
+        }
 
-        //combie Project
-        projectCombine(date, projects);
-
-        //count
-        projectCount(date, projects.keySet());
         System.out.println("End analyze , spend " + (System.currentTimeMillis() - begin) );
 
     }
