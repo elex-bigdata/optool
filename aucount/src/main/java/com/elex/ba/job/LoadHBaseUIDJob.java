@@ -38,11 +38,11 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
 
     public int run(String project) throws IOException, ClassNotFoundException, InterruptedException {
         byte[] table = Bytes.toBytes("deu_" + project);
-        Path outputpath = new Path("/user/hadoop/offline/node/" + node + "/" + project);
+        Path outputpath = new Path("/user/hadoop/offlinetest/node/" + node + "/" + project);
         Scan scan = new Scan();
 
-        scan.setStartRow(Bytes.toBytes("20130901visit"));
-        scan.setStopRow(Bytes.toBytes("2014071visit"));
+        scan.setStartRow(Bytes.toBytes("20140601visit"));
+        scan.setStopRow(Bytes.toBytes("20140602visit"));
         scan.setMaxVersions(1);
         scan.setCaching(4000);
         scan.setFilter(new KeyOnlyFilter());
