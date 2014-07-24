@@ -49,7 +49,7 @@ public class Main {
 
         //combie UID
 //        new UIDCombineJob(allpids).call();
-        uidCombine(allpids);
+//        uidCombine(allpids);
 
         //combie Project
 //        new ProjectCombineJob(projects);
