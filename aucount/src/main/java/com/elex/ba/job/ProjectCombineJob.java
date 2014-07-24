@@ -46,6 +46,8 @@ public class ProjectCombineJob implements Callable<Integer> {
         job.setMapperClass(ProjectCombineMapper.class);
         job.setReducerClass(ProjectCombineReducer.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
