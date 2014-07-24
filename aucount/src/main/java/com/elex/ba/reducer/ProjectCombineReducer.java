@@ -16,12 +16,13 @@ import java.util.Set;
  * Date: 14-6-6
  * Time: 下午6:51
  */
-public class ProjectCombineReducer extends Reducer<Text,NullWritable,Text,Text> {
+public class ProjectCombineReducer extends Reducer<Text,NullWritable,Text,NullWritable> {
 
     @Override
     protected void reduce(Text key, Iterable<NullWritable> values, Context context) throws IOException, InterruptedException {
-        String month = key.toString().substring(0,6);
+       /* String month = key.toString().substring(0,6);
         String uid = key.toString().substring(6);
-        context.write(new Text(month),new Text(uid));
+        context.write(new Text(month),new Text(uid));*/
+        context.write(key,NullWritable.get());
     }
 }

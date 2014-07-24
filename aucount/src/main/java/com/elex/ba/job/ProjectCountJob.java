@@ -1,9 +1,8 @@
 package com.elex.ba.job;
 
-import com.elex.ba.mapper.ProjectCombineMapper;
 import com.elex.ba.mapper.ProjectCountMapper;
-import com.elex.ba.reducer.ProjectCombineReducer;
 import com.elex.ba.reducer.ProjectCountReducer;
+import com.elex.ba.util.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -12,29 +11,30 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
  * Author: liqiang
+ * 统计
  * Date: 14-6-7
  * Time: 上午10:35
  */
 public class ProjectCountJob implements Callable<Integer> {
 
+    private String date;
     private String project ;
 
-
-    public ProjectCountJob(String project){
+    public ProjectCountJob(String date, String project){
+        this.date = date;
         this.project = project;
     }
 
     public int run() throws IOException, ClassNotFoundException, InterruptedException {
-        Path outputpath = new Path("/user/hadoop/offline/count/" + project);
-
+        Path outputpath = new Path(Utils.getProjectCountPath(date,project));
 
         Configuration conf = new Configuration();
         conf.set("mapred.child.java.opts", "-Xmx1024m");
@@ -46,7 +46,7 @@ public class ProjectCountJob implements Callable<Integer> {
         job.setMapperClass(ProjectCountMapper.class);
         job.setCombinerClass(ProjectCountReducer.class);
         job.setReducerClass(ProjectCountReducer.class);
-        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setInputFormatClass(TextInputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(Text.class);
@@ -58,7 +58,8 @@ public class ProjectCountJob implements Callable<Integer> {
         }
 
         FileOutputFormat.setOutputPath(job,outputpath);
-        Path p = new Path("/user/hadoop/offline/combine/"+project);
+        Path p = new Path(Utils.getProjectCombinePath(date,project));
+
         if(fs.exists(p)){
             FileInputFormat.addInputPath(job,p);
         }

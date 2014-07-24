@@ -2,9 +2,11 @@ package com.elex.ba.job;
 
 import com.elex.ba.mapper.UIDCombineMapper;
 import com.elex.ba.reducer.UIDCombineReducer;
+import com.elex.ba.util.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -16,22 +18,22 @@ import java.util.concurrent.Callable;
 
 /**
  * Author: liqiang
- * join uid，并去重
+ * 按小项目合并并转换16个HBase节点UID
  * Date: 14-6-7
  * Time: 上午10:35
  */
 public class UIDCombineJob implements Callable<Integer> {
 
-//    private Set<String> projects;
-    private String project;
+    private String project; //小项目名
+    private String date;
 
-    public UIDCombineJob(String project){
+    public UIDCombineJob(String date, String project){
+        this.date = date;
         this.project = project;
     }
 
     public int run(String project) throws IOException, ClassNotFoundException, InterruptedException {
-        Path outputpath = new Path("/user/hadoop/offline/project/" + project);
-
+        Path outputpath = new Path(Utils.getUIDCombinePath(date,project));
 
         Configuration conf = new Configuration();
         conf.set("mapred.child.java.opts", "-Xmx1024m");
@@ -44,8 +46,7 @@ public class UIDCombineJob implements Callable<Integer> {
         job.setReducerClass(UIDCombineReducer.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);
-        conf.set("pid",project);
+        job.setOutputValueClass(NullWritable.class);
 
         FileSystem fs = FileSystem.get(conf);
         if (fs.exists(outputpath)) {
@@ -54,8 +55,7 @@ public class UIDCombineJob implements Callable<Integer> {
 
         FileOutputFormat.setOutputPath(job,outputpath);
         for(int i =0;i<16; i++){
-            String nodename = "node" + i;
-            Path p = new Path("/user/hadoop/offline/node/" + nodename + "/" + project);
+            Path p = new Path(Utils.getHBaseUIDPath(date,"node" + i,project));
             if(fs.exists(p)){
                 FileInputFormat.addInputPath(job,p);
             }
@@ -74,18 +74,16 @@ public class UIDCombineJob implements Callable<Integer> {
     }
 
     public Integer call()  {
-//        for(String p : projects){
 
-            try {
-                if(run(project) == 0){
-                    System.out.println(" " + project + " success");
-                }else{
-                    System.out.println(" " + project + " fail");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            if(run(project) == 0){
+                System.out.println(" " + project + " success");
+            }else{
+                System.out.println(" " + project + " fail");
             }
-//        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return 1;
     }
 }

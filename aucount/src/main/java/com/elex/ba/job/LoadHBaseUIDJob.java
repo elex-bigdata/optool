@@ -2,6 +2,7 @@ package com.elex.ba.job;
 
 import com.elex.ba.mapper.LoadHBaseUIDMapper;
 import com.elex.ba.reducer.LoadHBaseUIDReducer;
+import com.elex.ba.util.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -27,23 +28,27 @@ import java.util.concurrent.Callable;
  */
 public class LoadHBaseUIDJob implements Callable<Integer> {
 
-    private Set<String> projects;
+    private Set<String> pids;
     private String node;
+    private String date;
+    private String[] timeRange;
 
 
-    public LoadHBaseUIDJob(String node, Set<String> projects){
-        this.projects = projects;
+    public LoadHBaseUIDJob(String date,String[] timeRange,String node, Set<String> pids){
+        this.date = date;
+        this.timeRange = timeRange;
+        this.pids = pids;
         this.node = node;
     }
 
-    public int run(String project) throws IOException, ClassNotFoundException, InterruptedException {
-        byte[] table = Bytes.toBytes("deu_" + project);
-        Path outputpath = new Path("/user/hadoop/offlinetest/node/" + node + "/" + project);
+    public int run(String pid) throws IOException, ClassNotFoundException, InterruptedException {
+        byte[] table = Bytes.toBytes("deu_" + pid);
+        Path outputpath = new Path(Utils.getHBaseUIDPath(date,node,pid));
         Scan scan = new Scan();
 
-        scan.setStartRow(Bytes.toBytes("20140601visit"));
-        scan.setStopRow(Bytes.toBytes("20140602visit"));
-        scan.setMaxVersions(1);
+        scan.setStartRow(Bytes.toBytes(timeRange[0] + "visit"));
+        scan.setStopRow(Bytes.toBytes(timeRange[1] + "visit"));
+        scan.setMaxVersions(1); //只需要一个version
         scan.setCaching(4000);
         scan.setFilter(new KeyOnlyFilter());
 
@@ -54,7 +59,7 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         conf.set("mapred.map.child.java.opts","-Xmx512m") ;
         conf.set("mapred.reduce.child.java.opts","-Xmx512m") ;
 
-        Job job = new Job(conf,node + "_" + project);
+        Job job = new Job(conf,node + "_" + pid);
         job.setJarByClass(LoadHBaseUIDJob.class);
         TableMapReduceUtil.initTableMapperJob(table, scan, LoadHBaseUIDMapper.class, Text.class, Text.class, job);
         job.setCombinerClass(LoadHBaseUIDReducer.class);
@@ -69,7 +74,6 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
 
         FileOutputFormat.setOutputPath(job, outputpath);
 
-
         job.waitForCompletion(true);
 
         if (job.isSuccessful()) {
@@ -81,7 +85,7 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        for(String p : projects){
+        for(String p : pids){
 
             try {
                 if(run(p) == 0){

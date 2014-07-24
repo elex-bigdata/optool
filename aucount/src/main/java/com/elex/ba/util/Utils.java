@@ -1,11 +1,18 @@
 package com.elex.ba.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Author: liqiang
  * Date: 14-7-23
  * Time: 下午5:05
  */
 public class Utils {
+
+    public static SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
     public static long transformerUID(byte[] hashUID){
         int offset = 5;
@@ -17,6 +24,51 @@ public class Utils {
             samplingUid ^= newBytes[i] & 0xFF;
         }
         return samplingUid;
+    }
+
+
+    //获取HBase查询的开始结束时间：20140714,7 将返回20140707,20140715
+    public static String[] getDateRange(String date, int dayOffset) throws ParseException {
+
+        String[] dateRange = new String[2];
+        Date end = format.parse(date);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(end);
+
+        cal.add(5,1);
+        String endTime = format.format(cal.getTime());
+
+        cal.add(5,-dayOffset);
+        String startTime = format.format(cal.getTime());
+
+        dateRange[0] = startTime;
+        dateRange[1] = endTime;
+
+        return dateRange;
+    }
+
+    public static String getHBaseUIDPath(String date,String node,String pid){
+        return "/user/hadoop/offline/"+date+"/node/" + node + "/" + pid;
+    }
+
+    public static String getUIDCombinePath(String date,String pid){
+        return "/user/hadoop/offline/"+date+"/pid/" +  pid;
+    }
+
+    public static String getProjectCombinePath(String date,String project){
+        return "/user/hadoop/offline/"+date+"/combine/" +  project;
+    }
+
+    public static String getProjectCountPath(String date,String project){
+        return "/user/hadoop/offline/"+date+"/count/" +  project;
+    }
+
+    public static void main(String[] args) throws ParseException {
+        String[]  week = getDateRange("20140711",7);
+        System.out.println(week[0] + " " + week[1]);
+        String[] month = getDateRange("20140711",30);
+        System.out.println(month[0] + " " + month[1]);
     }
 
 }

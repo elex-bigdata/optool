@@ -1,6 +1,7 @@
 package com.elex.ba.reducer;
 
 import com.elex.ba.util.Constants;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
@@ -13,23 +14,20 @@ import java.util.Set;
  * Date: 14-6-6
  * Time: 下午6:51
  */
-public class UIDCombineReducer extends Reducer<Text,Text,Text,Text> {
+public class UIDCombineReducer extends Reducer<Text,Text,Text,NullWritable> {
 
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        String orguid = "";
-        Set<String> months = new HashSet<String>();
         for(Text val : values){
             String data = val.toString();
-            if(data.startsWith(Constants.mau_month_prefix)){
-                months.add(data.substring(Constants.mau_month_prefix.length()));
-            }else{
-                orguid = data;
+            if(data.length() != 0){
+                context.write(new Text(data),NullWritable.get());
+                break;
             }
         }
 
-        for(String month : months){
+   /*     for(String month : months){
             context.write(new Text(orguid),new Text(month));
-        }
+        }*/
     }
 }
