@@ -2,12 +2,9 @@ package com.elex.ba.job;
 
 import com.elex.ba.mapper.UIDCombineMapper;
 import com.elex.ba.reducer.UIDCombineReducer;
-import com.elex.bigdata.mapper.CombineMapper;
-import com.elex.bigdata.reducer.CombineReducer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -15,7 +12,6 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -64,6 +60,9 @@ public class UIDCombineJob {
                 FileInputFormat.addInputPath(job,p);
             }
         }
+
+        String idmapPath = "/user/hadoop/mysqlidmap/vf_" + project;
+        FileInputFormat.addInputPath(job, new Path(idmapPath));
 
         job.waitForCompletion(true);
 

@@ -12,10 +12,10 @@ import java.io.IOException;
  * Date: 14-6-6
  * Time: 下午4:01
  */
-public class UIDCombineMapper extends Mapper<Text,Text,Text,Text>{
+public class UIDCombineMapper extends Mapper<LongWritable,Text,LongWritable,Text>{
 
     @Override
-    protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         context.write(key,value);
     }
 }

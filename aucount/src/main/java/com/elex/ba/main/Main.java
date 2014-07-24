@@ -45,7 +45,7 @@ public class Main {
             allpids.addAll(pids);
         }
         //load UID
-        loadHBaseUID(allpids);
+//        loadHBaseUID(allpids);
 
         //combie UID
         new UIDCombineJob(allpids).call();
