@@ -15,10 +15,10 @@ import java.util.Set;
  * Date: 14-6-6
  * Time: 下午6:51
  */
-public class ProjectCombineReducer extends Reducer<LongWritable,Text,LongWritable,IntWritable> {
+public class ProjectCombineReducer extends Reducer<Text,Text,Text,IntWritable> {
 
     @Override
-    protected void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+    protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         //key= month value=uid
 
         Set<String> uid = new HashSet<String>();
