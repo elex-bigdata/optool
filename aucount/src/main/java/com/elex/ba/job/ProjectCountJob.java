@@ -5,7 +5,6 @@ import com.elex.ba.reducer.ProjectCombineReducer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -21,19 +20,17 @@ import java.util.concurrent.Callable;
  * Date: 14-6-7
  * Time: 上午10:35
  */
-public class ProjectCombineJob implements Callable<Integer> {
+public class ProjectCountJob implements Callable<Integer> {
 
     private String project ;
-    private Set<String> pids;
 
 
-    public ProjectCombineJob(String project, Set<String> pids){
+    public ProjectCountJob(String project){
         this.project = project;
-        this.pids = pids;
     }
 
     public int run() throws IOException, ClassNotFoundException, InterruptedException {
-        Path outputpath = new Path("/user/hadoop/offline/combine/" + project);
+        Path outputpath = new Path("/user/hadoop/offline/count/" + project);
 
 
         Configuration conf = new Configuration();
@@ -41,8 +38,8 @@ public class ProjectCombineJob implements Callable<Integer> {
         conf.set("mapred.map.child.java.opts","-Xmx1024m") ;
         conf.set("mapred.reduce.child.java.opts","-Xmx1024m") ;
 
-        Job job = new Job(conf,"pcombine_" + project);
-        job.setJarByClass(ProjectCombineJob.class);
+        Job job = new Job(conf,"pcount_" + project);
+        job.setJarByClass(ProjectCountJob.class);
         job.setMapperClass(ProjectCombineMapper.class);
         job.setReducerClass(ProjectCombineReducer.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
@@ -57,11 +54,9 @@ public class ProjectCombineJob implements Callable<Integer> {
         }
 
         FileOutputFormat.setOutputPath(job,outputpath);
-        for(String pid : pids){
-            Path p = new Path("/user/hadoop/offline/project/"+pid);
-            if(fs.exists(p)){
-                FileInputFormat.addInputPath(job,p);
-            }
+        Path p = new Path("/user/hadoop/offline/combine/"+project);
+        if(fs.exists(p)){
+            FileInputFormat.addInputPath(job,p);
         }
 
         job.waitForCompletion(true);

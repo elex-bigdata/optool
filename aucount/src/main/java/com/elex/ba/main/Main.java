@@ -2,6 +2,7 @@ package com.elex.ba.main;
 
 import com.elex.ba.job.LoadHBaseUIDJob;
 import com.elex.ba.job.ProjectCombineJob;
+import com.elex.ba.job.ProjectCountJob;
 import com.elex.ba.job.UIDCombineJob;
 import com.google.gson.Gson;
 
@@ -55,6 +56,7 @@ public class Main {
 //        new ProjectCombineJob(projects);
         projectCombine(projects);
 
+        projectCount(projects.keySet());
         System.out.println("end analyze , spend " + (System.currentTimeMillis() - begin) );
 
     }
@@ -104,6 +106,25 @@ public class Main {
         List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
         for(String p : projects.keySet()){
             tasks.add(service.submit(new ProjectCombineJob(p,projects.get(p))));
+        }
+
+        for(Future f : tasks){
+            try {
+                f.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        service.shutdown();
+        System.out.println("count finished");
+    }
+
+    public static void projectCount(Set<String> projects){
+        ExecutorService service = new ThreadPoolExecutor(16,20,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+        List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
+        for(String p : projects){
+            tasks.add(service.submit(new ProjectCountJob(p)));
         }
 
         for(Future f : tasks){

@@ -1,5 +1,6 @@
 package com.elex.ba.mapper;
 
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
@@ -10,11 +11,12 @@ import java.io.IOException;
  * Date: 14-6-6
  * Time: 下午4:01
  */
-public class ProjectCombineMapper extends Mapper<Text,Text,Text,Text>{
+public class ProjectCountMapper extends Mapper<Text,Text,Text,IntWritable>{
 
+    private IntWritable count = new IntWritable(1);
     @Override
     protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
         //key = uid value = month
-        context.write(key,value);
+        context.write(value,count);
     }
 }
