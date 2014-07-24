@@ -1,19 +1,18 @@
 package com.elex.ba.job;
 
+import com.elex.ba.inputformat.KeyValueCombineInputformat;
 import com.elex.ba.mapper.UIDCombineMapper;
 import com.elex.ba.reducer.UIDCombineReducer;
 import com.elex.ba.util.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
@@ -49,7 +48,7 @@ public class UIDCombineJob implements Callable<Integer> {
         job.setJarByClass(UIDCombineJob.class);
         job.setMapperClass(UIDCombineMapper.class);
         job.setReducerClass(UIDCombineReducer.class);
-        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setInputFormatClass(KeyValueCombineInputformat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);

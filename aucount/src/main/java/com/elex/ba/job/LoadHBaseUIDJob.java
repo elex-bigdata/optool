@@ -61,7 +61,7 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         conf.set("hbase.zookeeper.property.clientPort", "3181");
         conf.set("mapred.child.java.opts", "-Xmx1024m");
         conf.set("mapred.map.child.java.opts","-Xmx512m") ;
-        conf.set("mapred.reduce.child.java.opts","-Xmx512m") ;
+        conf.set("mapred.reduce.child.java.opts", "-Xmx512m") ;
         conf.setBoolean("mapred.compress.map.output", true);
         conf.setClass("mapred.map.output.compression.codec", Lz4Codec.class, CompressionCodec.class);
 

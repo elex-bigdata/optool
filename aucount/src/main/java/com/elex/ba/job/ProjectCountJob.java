@@ -1,5 +1,6 @@
 package com.elex.ba.job;
 
+import com.elex.ba.inputformat.TextCombineInputformat;
 import com.elex.ba.mapper.ProjectCountMapper;
 import com.elex.ba.reducer.ProjectCountReducer;
 import com.elex.ba.util.Utils;
@@ -50,7 +51,7 @@ public class ProjectCountJob implements Callable<Integer> {
         job.setMapperClass(ProjectCountMapper.class);
         job.setCombinerClass(ProjectCountReducer.class);
         job.setReducerClass(ProjectCountReducer.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(TextCombineInputformat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(Text.class);

@@ -1,5 +1,6 @@
 package com.elex.ba.job;
 
+import com.elex.ba.inputformat.TextCombineInputformat;
 import com.elex.ba.mapper.ProjectCombineMapper;
 import com.elex.ba.reducer.ProjectCombineReducer;
 import com.elex.ba.util.Utils;
@@ -12,8 +13,6 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
@@ -54,7 +53,7 @@ public class ProjectCombineJob implements Callable<Integer> {
         job.setMapperClass(ProjectCombineMapper.class);
         job.setCombinerClass(ProjectCombineReducer.class);
         job.setReducerClass(ProjectCombineReducer.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(TextCombineInputformat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(NullWritable.class);
         job.setOutputKeyClass(Text.class);
