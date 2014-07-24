@@ -17,6 +17,6 @@ public class ProjectCountMapper extends Mapper<Text,Text,Text,IntWritable>{
     @Override
     protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
         //key = uid value = month
-        context.write(value,count);
+        context.write(key,count);
     }
 }

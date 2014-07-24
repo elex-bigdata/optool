@@ -1,7 +1,9 @@
 package com.elex.ba.job;
 
 import com.elex.ba.mapper.ProjectCombineMapper;
+import com.elex.ba.mapper.ProjectCountMapper;
 import com.elex.ba.reducer.ProjectCombineReducer;
+import com.elex.ba.reducer.ProjectCountReducer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -40,8 +42,9 @@ public class ProjectCountJob implements Callable<Integer> {
 
         Job job = new Job(conf,"pcount_" + project);
         job.setJarByClass(ProjectCountJob.class);
-        job.setMapperClass(ProjectCombineMapper.class);
-        job.setReducerClass(ProjectCombineReducer.class);
+        job.setMapperClass(ProjectCountMapper.class);
+        job.setCombinerClass(ProjectCountReducer.class);
+        job.setReducerClass(ProjectCountReducer.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
