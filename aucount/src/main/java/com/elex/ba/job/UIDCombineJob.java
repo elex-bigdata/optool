@@ -6,6 +6,7 @@ import com.elex.ba.util.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -45,6 +46,8 @@ public class UIDCombineJob implements Callable<Integer> {
         job.setMapperClass(UIDCombineMapper.class);
         job.setReducerClass(UIDCombineReducer.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
 
