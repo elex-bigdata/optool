@@ -38,8 +38,8 @@ public class ProjectCombineJob implements Callable<Integer> {
 
         Configuration conf = new Configuration();
         conf.set("mapred.child.java.opts", "-Xmx1024m");
-        conf.set("mapred.map.child.java.opts","-Xmx512m") ;
-        conf.set("mapred.reduce.child.java.opts","-Xmx512m") ;
+        conf.set("mapred.map.child.java.opts","-Xmx1024m") ;
+        conf.set("mapred.reduce.child.java.opts","-Xmx1024m") ;
 
         Job job = new Job(conf,"pcombine_" + project);
         job.setJarByClass(ProjectCombineJob.class);
@@ -50,6 +50,8 @@ public class ProjectCombineJob implements Callable<Integer> {
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
+        //201309-201406 10个月 每个月一个reduce
+        job.setNumReduceTasks(10);
 
         FileSystem fs = FileSystem.get(conf);
         if (fs.exists(outputpath)) {
