@@ -11,6 +11,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
@@ -45,9 +46,8 @@ public class ProjectCombineJob {
         Job job = new Job(conf,"pcombine_" + project);
         job.setJarByClass(ProjectCombineJob.class);
         job.setMapperClass(ProjectCombineMapper.class);
-//        job.setCombinerClass(ProjectCombineReducer.class);
         job.setReducerClass(ProjectCombineReducer.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
         conf.set("pid",project);

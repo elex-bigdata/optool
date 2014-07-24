@@ -16,18 +16,15 @@ import java.io.IOException;
  * Date: 14-7-23
  * Time: 下午5:03
  */
-public class LoadHBaseUIDMapper extends TableMapper<Text,Text> {
+public class LoadHBaseUIDMapper extends TableMapper<LongWritable,Text> {
 
 
     @Override
     protected void map(ImmutableBytesWritable key, Result value, Context context) throws IOException, InterruptedException {
         try{
             String m = Bytes.toStringBinary(Bytes.head(key.get(), 6)); //月份
-            byte[] uid = Bytes.tail(key.get(),5);
-            long tranuid = Bytes.toLong(uid);
-            long reuid = Utils.transformerUID(Bytes.tail(key.get(),5)); //将HBASE uid转换为 samplingUID ，将与MYSQL ID 做关联
-
-            context.write(new Text(tranuid + "_" + reuid),new Text(Constants.mau_month_prefix + m));
+            long uid = Utils.transformerUID(Bytes.tail(key.get(),5)); //将HBASE uid转换为 samplingUID ，将与MYSQL ID 做关联
+            context.write(new LongWritable(uid),new Text(Constants.mau_month_prefix + m));
         } catch (Exception e) {
             e.printStackTrace();
         }

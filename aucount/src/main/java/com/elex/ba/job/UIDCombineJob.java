@@ -8,7 +8,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class UIDCombineJob {
         job.setJarByClass(UIDCombineJob.class);
         job.setMapperClass(UIDCombineMapper.class);
         job.setReducerClass(UIDCombineReducer.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
         conf.set("pid",project);

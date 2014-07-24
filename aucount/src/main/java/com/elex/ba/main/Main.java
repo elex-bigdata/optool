@@ -21,7 +21,7 @@ public class Main {
     public static void  main(String[] args) throws Exception {
         long begin = System.currentTimeMillis();
         System.out.println("begin analyze");
-        File file = new File(Main.class.getClassLoader().getResource("projects_test").getFile());
+        File file = new File(Main.class.getClassLoader().getResource("projects").getFile());
 //        File pfile = new File(fpath);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = null;
@@ -45,13 +45,13 @@ public class Main {
             allpids.addAll(pids);
         }
         //load UID
-        loadHBaseUID(allpids);
+//        loadHBaseUID(allpids);
 
-/*        //combie UID
+        //combie UID
         new UIDCombineJob(allpids).call();
 
         //combie Project
-        new ProjectCombineJob(projects);*/
+        new ProjectCombineJob(projects);
 
         System.out.println("end analyze , spend " + (System.currentTimeMillis() - begin) );
 
