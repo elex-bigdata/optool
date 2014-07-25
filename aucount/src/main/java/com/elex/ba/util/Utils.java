@@ -48,6 +48,15 @@ public class Utils {
         return dateRange;
     }
 
+    public static String getLastDate(String date) throws ParseException{
+        Date day = format.parse(date);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(day);
+
+        cal.add(5,-1);
+        return format.format(cal.getTime());
+    }
+
     public static String getHBaseUIDPath(String date,String node,String pid){
         return "/user/hadoop/offline/"+date+"/node/" + node + "/" + pid;
     }
@@ -60,8 +69,8 @@ public class Utils {
         return "/user/hadoop/offline/"+date+"/combine/" +  project;
     }
 
-    public static String getProjectCountPath(String date,String project){
-        return "/user/hadoop/offline/"+date+"/count/" +  project;
+    public static String getProjectCountPath(String date,String project, int range){
+        return "/user/hadoop/offline/"+date+"/count" + range + "/" +  project;
     }
 
     public static void main(String[] args) throws ParseException {
