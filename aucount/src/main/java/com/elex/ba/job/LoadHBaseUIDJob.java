@@ -69,7 +69,7 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         job.setJarByClass(LoadHBaseUIDJob.class);
         TableMapReduceUtil.initTableMapperJob(table, scan, LoadHBaseUIDMapper.class, Text.class, Text.class, job);
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(NullWritable.class);
+        job.setMapOutputValueClass(Text.class);
         job.setCombinerClass(LoadHBaseUIDReducer.class);
         job.setReducerClass(LoadHBaseUIDReducer.class);
         job.setOutputKeyClass(Text.class);
