@@ -54,7 +54,7 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         scan.setMaxVersions(1); //只需要一个version
         scan.setCaching(10000);
         scan.setFilter(new KeyOnlyFilter());
-        scan.setFilter(new RowFilter(CompareFilter.CompareOp.EQUAL,new RegexStringComparator(".*visit.*")));
+//        scan.setFilter(new RowFilter(CompareFilter.CompareOp.EQUAL,new RegexStringComparator(".*visit.*")));
 
         Configuration conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum", node);
