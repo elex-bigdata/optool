@@ -16,16 +16,15 @@ import java.util.Set;
 public class LoadHBaseUIDReducer extends Reducer<Text,NullWritable,Text,Text> {
 
     private Text empty = new Text("");
-
     @Override
     protected void reduce(Text key, Iterable<NullWritable> values, Context context) throws IOException, InterruptedException {
-        /*Set<String> months = new HashSet<String>();
-        for(Text month : values){
-            months.add(month.toString());
-        }
-        for(String month : months){
-            context.write(key,new Text(month));
-        }*/
+//        Set<String> days = new HashSet<String>();
+//        for(Text day : values){
+//            days.add(day.toString());
+//        }
+//        for(String day : days){
+//            context.write(key,new Text(day));
+//        }
         context.write(key,empty);
     }
 }

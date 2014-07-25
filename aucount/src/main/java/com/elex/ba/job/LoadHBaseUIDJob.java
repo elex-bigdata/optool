@@ -8,9 +8,13 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
+import org.apache.hadoop.hbase.filter.RegexStringComparator;
+import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
@@ -32,12 +36,10 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
     private String pid;
     private String node;
     private String date;
-    private String[] timeRange;
 
 
-    public LoadHBaseUIDJob(String date,String[] timeRange,String node, String pid){
+    public LoadHBaseUIDJob(String date,String node, String pid){
         this.date = date;
-        this.timeRange = timeRange;
         this.pid = pid;
         this.node = node;
     }
@@ -47,11 +49,12 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         Path outputpath = new Path(Utils.getHBaseUIDPath(date, node, pid));
         Scan scan = new Scan();
 
-        scan.setStartRow(Bytes.toBytes(timeRange[0] + "visit"));
-        scan.setStopRow(Bytes.toBytes(timeRange[1] + "visit"));
+        scan.setStartRow(Bytes.toBytes("20140625visit"));
+        scan.setStopRow(Bytes.toBytes("20140724visiu"));
         scan.setMaxVersions(1); //只需要一个version
         scan.setCaching(10000);
         scan.setFilter(new KeyOnlyFilter());
+        scan.setFilter(new RowFilter(CompareFilter.CompareOp.EQUAL,new RegexStringComparator(".*visit.*")));
 
         Configuration conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum", node);
@@ -66,12 +69,12 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         job.setJarByClass(LoadHBaseUIDJob.class);
         TableMapReduceUtil.initTableMapperJob(table, scan, LoadHBaseUIDMapper.class, Text.class, Text.class, job);
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(Text.class);
+        job.setMapOutputValueClass(NullWritable.class);
         job.setCombinerClass(LoadHBaseUIDReducer.class);
         job.setReducerClass(LoadHBaseUIDReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-        job.setNumReduceTasks(4);
+        job.setNumReduceTasks(3);
 
         FileSystem fs = FileSystem.get(conf);
         if (fs.exists(outputpath)) {
