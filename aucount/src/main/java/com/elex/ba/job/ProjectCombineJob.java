@@ -16,12 +16,14 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
  * Author: liqiang
- * 所有指定项目数据合并起来
+ * 合并internet大项目下的所有小项目UID
  * Date: 14-6-7
  * Time: 上午10:35
  */
@@ -66,16 +68,23 @@ public class ProjectCombineJob implements Callable<Integer> {
         }
 
         FileOutputFormat.setOutputPath(job,outputpath);
+        List<Path> inputPaths = new ArrayList<Path>();
         for(String pid : pids){
             Path p = new Path(Utils.getUIDCombinePath(date,pid));
             if(fs.exists(p)){
                 FileInputFormat.addInputPath(job,p);
+                inputPaths.add(p);
+            }else{
+                throw new RuntimeException("The input path " + p.toString() + " not exist");
             }
         }
 
         job.waitForCompletion(true);
 
         if (job.isSuccessful()) {
+            for(Path p : inputPaths){
+                fs.delete(p, true);
+            }
             return 0;
         } else {
             return -1;

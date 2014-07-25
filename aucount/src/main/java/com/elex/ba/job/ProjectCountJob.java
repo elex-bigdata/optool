@@ -13,11 +13,10 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.concurrent.Callable;
 
 /**
@@ -30,14 +29,16 @@ public class ProjectCountJob implements Callable<Integer> {
 
     private String date;
     private String project ;
+    private int range;
 
-    public ProjectCountJob(String date, String project){
+    public ProjectCountJob(String date, String project, int range){
         this.date = date;
         this.project = project;
+        this.range = range;
     }
 
-    public int run() throws IOException, ClassNotFoundException, InterruptedException {
-        Path outputpath = new Path(Utils.getProjectCountPath(date,project));
+    public int run() throws IOException, ClassNotFoundException, InterruptedException, ParseException {
+        Path outputpath = new Path(Utils.getProjectCountPath(date,project,range));
 
         Configuration conf = new Configuration();
         conf.set("mapred.child.java.opts", "-Xmx1024m");
@@ -46,7 +47,7 @@ public class ProjectCountJob implements Callable<Integer> {
         conf.setBoolean("mapred.compress.map.output", true);
         conf.setClass("mapred.map.output.compression.codec", Lz4Codec.class, CompressionCodec.class);
 
-        Job job = new Job(conf,"pcount_" + project);
+        Job job = new Job(conf,"pcount_" +range + "_" + project);
         job.setJarByClass(ProjectCountJob.class);
         job.setMapperClass(ProjectCountMapper.class);
         job.setCombinerClass(ProjectCountReducer.class);
@@ -63,10 +64,18 @@ public class ProjectCountJob implements Callable<Integer> {
         }
 
         FileOutputFormat.setOutputPath(job,outputpath);
-        Path p = new Path(Utils.getProjectCombinePath(date,project));
+        String newDate = date;
+        for(int i=0; i<range;i++){
+            if(i >0){
+                newDate = Utils.getLastDate(newDate);
+            }
+            Path p = new Path(Utils.getProjectCombinePath(newDate,project));
 
-        if(fs.exists(p)){
-            FileInputFormat.addInputPath(job,p);
+            if(fs.exists(p)){
+                FileInputFormat.addInputPath(job,p);
+            }else{
+                throw new RuntimeException("The input path " + p.toString() + " not exist");
+            }
         }
 
         job.waitForCompletion(true);

@@ -35,8 +35,8 @@ public class Main {
 
         long begin = System.currentTimeMillis();
         System.out.println("begin analyze");
+        //获取项目列表
         File file = new File(Main.class.getClassLoader().getResource("projects").getFile());
-//        File pfile = new File(fpath);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = null;
         String json = "";
@@ -46,7 +46,6 @@ public class Main {
         }
 
         Map<String,String> pjson = new Gson().fromJson(json, Map.class);
-
         Map<String,Set<String>> projects = new HashMap<String,Set<String>>();
         Set<String> allpids = new HashSet<String>();
         for(Map.Entry<String,String> kv : pjson.entrySet()){
@@ -58,31 +57,50 @@ public class Main {
             projects.put(kv.getKey(), pids);
             allpids.addAll(pids);
         }
+
         if("hbase".equals(type)){
             //load UID
-            loadHBaseUID(date, allpids);
+            loadHBaseUID(date, allpids, 1);
         }else if("trans".equals(type)){
             //combie UID
             uidCombine(date, allpids);
         }else if("comb".equals(type)){
-
             //combie Project
             projectCombine(date, projects);
-        }else if("count".equals(type)){
-            //count
-            projectCount(date, projects.keySet());
+        }else if("wau".equals(type)){ //周活跃
+            loadHBaseUID(date, allpids, 1);
+            uidCombine(date, allpids);
+            projectCombine(date, projects);
+            projectCount(date, projects.keySet(), 7);
+        }else if("mau".equals(type)){ //月活跃
+            loadHBaseUID(date, allpids, 1);
+            uidCombine(date, allpids);
+            projectCombine(date, projects);
+            projectCount(date, projects.keySet(), 30);
+        }else if("batchload".equals(type)){
+            //首次运行离线导出30天的UID，按天按大项目的类别进行存储
+            for(int i=0; i<30; i++){
+                if(i >0){
+                    date = Utils.getLastDate(date);
+                }
+                loadHBaseUID(date, allpids, 1);
+                uidCombine(date, allpids);
+                projectCombine(date, projects);
+            }
         }
 
         System.out.println("End analyze , spend " + (System.currentTimeMillis() - begin) );
 
     }
 
-    public static void loadHBaseUID(String date,Set<String> projects) throws ParseException {
-        ExecutorService service = new ThreadPoolExecutor(16,16,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+    public static void loadHBaseUID(String date,Set<String> projects,int offset) throws ParseException {
+        ExecutorService service = new ThreadPoolExecutor(16,40,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
         List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
-        String[] timeRange = Utils.getDateRange(date,30);
-        for(int i =0;i<16; i++){
-            tasks.add(service.submit(new LoadHBaseUIDJob(date, timeRange, "node" + i, projects)));
+        String[] timeRange = Utils.getDateRange(date,offset);
+        for(String pid : projects){
+            for(int i =0;i<16; i++){
+                tasks.add(service.submit(new LoadHBaseUIDJob(date, timeRange, "node" + i, pid)));
+            }
         }
 
         for(Future f : tasks){
@@ -94,7 +112,7 @@ public class Main {
         }
 
         service.shutdown();
-        System.out.println("count finished");
+        System.out.println("loadHBaseUID finished");
     }
 
     public static void uidCombine(String date, Set<String> projects){
@@ -113,7 +131,7 @@ public class Main {
         }
 
         service.shutdown();
-        System.out.println("count finished");
+        System.out.println("uidCombine finished");
     }
 
     public static void projectCombine(String date, Map<String,Set<String>> projects){
@@ -132,14 +150,14 @@ public class Main {
         }
 
         service.shutdown();
-        System.out.println("count finished");
+        System.out.println("projectCombine finished");
     }
 
-    public static void projectCount(String date, Set<String> projects){
+    public static void projectCount(String date, Set<String> projects, int range){
         ExecutorService service = new ThreadPoolExecutor(16,20,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
         List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
         for(String p : projects){
-            tasks.add(service.submit(new ProjectCountJob(date,p)));
+            tasks.add(service.submit(new ProjectCountJob(date,p, range)));
         }
 
         for(Future f : tasks){
@@ -151,6 +169,6 @@ public class Main {
         }
 
         service.shutdown();
-        System.out.println("count finished");
+        System.out.println("projectCount finished");
     }
 }

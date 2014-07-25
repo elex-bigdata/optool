@@ -11,8 +11,6 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
@@ -20,32 +18,31 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
  * Author: liqiang
- * 将指定项目的HBase visit的UID提取出来，输出格式为 UID,MONTH
+ * 将指定项目的HBase visit的UID提取出来，
+ * 为了兼容下一步MYSQL IDMAP的输入，输出为 UID\t''
  * Date: 14-7-23
  * Time: 下午4:55
  */
 public class LoadHBaseUIDJob implements Callable<Integer> {
 
-    private Set<String> pids;
+    private String pid;
     private String node;
     private String date;
     private String[] timeRange;
 
 
-    public LoadHBaseUIDJob(String date,String[] timeRange,String node, Set<String> pids){
+    public LoadHBaseUIDJob(String date,String[] timeRange,String node, String pid){
         this.date = date;
         this.timeRange = timeRange;
-        this.pids = pids;
+        this.pid = pid;
         this.node = node;
     }
 
-    public int run(String pid) throws IOException, ClassNotFoundException, InterruptedException {
+    public int run() throws IOException, ClassNotFoundException, InterruptedException {
         byte[] table = Bytes.toBytes("deu_" + pid);
         Path outputpath = new Path(Utils.getHBaseUIDPath(date, node, pid));
         Scan scan = new Scan();
@@ -53,7 +50,7 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         scan.setStartRow(Bytes.toBytes(timeRange[0] + "visit"));
         scan.setStopRow(Bytes.toBytes(timeRange[1] + "visit"));
         scan.setMaxVersions(1); //只需要一个version
-        scan.setCaching(4000);
+        scan.setCaching(10000);
         scan.setFilter(new KeyOnlyFilter());
 
         Configuration conf = HBaseConfiguration.create();
@@ -94,17 +91,15 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        for(String p : pids){
 
-            try {
-                if(run(p) == 0){
-                    System.out.println(node + " " + p + " success");
-                }else{
-                    System.out.println(node + " " + p + " fail");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            if(run() == 0){
+                System.out.println(node + " " + pid + " success");
+            }else{
+                System.out.println(node + " " + pid + " fail");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return 1;
     }

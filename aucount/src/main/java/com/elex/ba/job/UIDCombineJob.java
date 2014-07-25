@@ -16,11 +16,13 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
  * Author: liqiang
- * 按小项目合并并转换16个HBase节点UID
+ * 按小项目合并16个HBase节点UID，并转换成原始UID，输出原始UID
  * Date: 14-6-7
  * Time: 上午10:35
  */
@@ -61,10 +63,14 @@ public class UIDCombineJob implements Callable<Integer> {
         }
 
         FileOutputFormat.setOutputPath(job,outputpath);
+        List<Path> inputPaths = new ArrayList<Path>();
         for(int i =0;i<16; i++){
             Path p = new Path(Utils.getHBaseUIDPath(date,"node" + i,project));
             if(fs.exists(p)){
                 FileInputFormat.addInputPath(job,p);
+                inputPaths.add(p);
+            }else{
+                throw new RuntimeException("The input path " + p.toString() + " not exist");
             }
         }
 
@@ -74,6 +80,9 @@ public class UIDCombineJob implements Callable<Integer> {
         job.waitForCompletion(true);
 
         if (job.isSuccessful()) {
+            for(Path p : inputPaths){
+                fs.delete(p, true);
+            }
             return 0;
         } else {
             return -1;
