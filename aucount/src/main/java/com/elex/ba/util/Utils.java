@@ -58,7 +58,7 @@ public class Utils {
     }
 
     public static String getHBaseUIDPath(String date,String node,String pid){
-        return "/user/hadoop/offline/"+date+"/node/" + node + "/" + pid;
+        return "/user/hadoop/offline/node/" + node + "/" + pid;
     }
 
     public static String getUIDCombinePath(String date,String pid){
