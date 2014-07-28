@@ -49,7 +49,7 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         Path outputpath = new Path(Utils.getHBaseUIDPath(date, node, pid));
         Scan scan = new Scan();
 
-        scan.setStartRow(Bytes.toBytes("20140725visit"));
+        scan.setStartRow(Bytes.toBytes("20140628visit"));
         scan.setStopRow(Bytes.toBytes("20140727visiu"));
         scan.setMaxVersions(1); //只需要一个version
         scan.setCaching(10000);

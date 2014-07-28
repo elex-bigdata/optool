@@ -19,7 +19,6 @@ import java.io.IOException;
  */
 public class LoadHBaseUIDMapper extends TableMapper<Text,Text> {
 
-    private Text empty = new Text("");
     @Override
     protected void map(ImmutableBytesWritable key, Result value, Context context) throws IOException, InterruptedException {
         try{
@@ -27,7 +26,7 @@ public class LoadHBaseUIDMapper extends TableMapper<Text,Text> {
             /*String m = Bytes.toStringBinary(Bytes.head(key.get(), 6)); //月份
             context.write(new LongWritable(uid),new Text(Constants.mau_month_prefix + m));*/
             String day = Bytes.toStringBinary(Bytes.head(key.get(), 8));
-            context.write(new Text(day + uid), empty);
+            context.write(new Text(uid + ""), new Text(day));
         } catch (Exception e) {
             e.printStackTrace();
         }
