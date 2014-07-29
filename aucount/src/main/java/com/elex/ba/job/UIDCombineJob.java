@@ -13,6 +13,7 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class UIDCombineJob implements Callable<Integer> {
         job.setJarByClass(UIDCombineJob.class);
         job.setMapperClass(UIDCombineMapper.class);
         job.setReducerClass(UIDCombineReducer.class);
-        job.setInputFormatClass(KeyValueCombineInputformat.class);
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
