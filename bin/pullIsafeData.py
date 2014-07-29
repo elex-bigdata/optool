@@ -79,6 +79,8 @@ class myThread (threading.Thread):
         content += "<tr><td colspan='5' style='border:1px solid'>%s %s</td></tr>"%(self.ref,self.groupby)
         content += "<tr><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td></tr>\n"%("","new","uninstall","2day","6day")
 
+        totalNew = 0
+        totalUninstall = 0
         for sd in sortedData:
             data = data2map[sd[0]]
             day2percent = data["2day"]
@@ -89,6 +91,7 @@ class myThread (threading.Thread):
                 day6percent = str(day6percent*100) + "%"
 
             content += "<tr><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td></tr>\n"%(sd[0],data["new"],data["uninstall"],day2percent,day6percent)
+            if data[]
         content +="</table></br></div>"
 
         queue.put(content)
