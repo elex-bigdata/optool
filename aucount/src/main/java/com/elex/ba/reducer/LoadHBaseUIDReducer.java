@@ -17,7 +17,7 @@ import java.util.Set;
 public class LoadHBaseUIDReducer extends Reducer<Text,Text,Text,Text> {
 
     private Text empty = new Text("");
-    private MultipleOutputs mos;
+    private MultipleOutputs<Text,Text> mos;
 
     @Override
     protected void setup(Context context)
@@ -35,5 +35,9 @@ public class LoadHBaseUIDReducer extends Reducer<Text,Text,Text,Text> {
             mos.write(day,key,empty);
         }
 
+    }
+
+    protected void cleanup(Context context) throws IOException,InterruptedException {
+        mos.close();
     }
 }
