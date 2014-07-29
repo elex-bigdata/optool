@@ -62,7 +62,7 @@ public class ProjectCombineJob implements Callable<Integer> {
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
-//        job.setNumReduceTasks(10);
+        job.setNumReduceTasks(5);
 
         for(String d : days){
             MultipleOutputs.addNamedOutput(job, d, TextOutputFormat.class, Text.class, Text.class);
