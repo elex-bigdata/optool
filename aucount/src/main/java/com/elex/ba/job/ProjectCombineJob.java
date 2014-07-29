@@ -80,8 +80,6 @@ public class ProjectCombineJob implements Callable<Integer> {
             if(fs.exists(p)){
                 FileInputFormat.addInputPath(job,p);
                 inputPaths.add(p);
-            }else{
-                throw new RuntimeException("The input path " + p.toString() + " not exist");
             }
         }
 
