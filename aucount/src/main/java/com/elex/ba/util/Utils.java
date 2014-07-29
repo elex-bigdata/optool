@@ -57,6 +57,24 @@ public class Utils {
         return format.format(cal.getTime());
     }
 
+    public static String[] getLastDate(String date,int num) throws ParseException{
+        Date day = format.parse(date);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(day);
+
+
+
+        String[] result = new String[num];
+        result[0] = date;
+        for(int i =1;i<num;i++){
+            cal.add(5,-1);
+            result[i] = format.format(cal.getTime());
+            System.out.println(result[i]);
+        }
+
+        return result;
+    }
+
     public static String getHBaseUIDPath(String date,String node,String pid){
         return "/user/hadoop/offline/node/" + node + "/" + pid;
     }
@@ -74,10 +92,11 @@ public class Utils {
     }
 
     public static void main(String[] args) throws ParseException {
-        String[]  week = getDateRange("20140711",7);
+       /* String[]  week = getDateRange("20140711",7);
         System.out.println(week[0] + " " + week[1]);
         String[] month = getDateRange("20140711",30);
-        System.out.println(month[0] + " " + month[1]);
+        System.out.println(month[0] + " " + month[1]);*/
+        getLastDate("20140728",30);
     }
 
 }

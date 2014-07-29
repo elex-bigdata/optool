@@ -18,10 +18,14 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
+import org.apache.hadoop.mapred.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.concurrent.Callable;
 
 /**
@@ -44,13 +48,15 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         this.node = node;
     }
 
-    public int run() throws IOException, ClassNotFoundException, InterruptedException {
+    public int run() throws IOException, ClassNotFoundException, InterruptedException, ParseException {
         byte[] table = Bytes.toBytes("deu_" + pid);
         Path outputpath = new Path(Utils.getHBaseUIDPath(date, node, pid));
         Scan scan = new Scan();
 
-        scan.setStartRow(Bytes.toBytes("20140628visit"));
-        scan.setStopRow(Bytes.toBytes("20140727visiu"));
+        String[] days = Utils.getLastDate(date,30);
+
+        scan.setStartRow(Bytes.toBytes(days[0] + "visit"));
+        scan.setStopRow(Bytes.toBytes(days[29] + "visiu"));
         scan.setMaxVersions(1); //只需要一个version
         scan.setCaching(10000);
         scan.setFilter(new KeyOnlyFilter());
@@ -75,6 +81,12 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
         job.setNumReduceTasks(3);
+
+
+
+        for(String d : days){
+            MultipleOutputs.addNamedOutput(job, d, TextOutputFormat.class, Text.class, Text.class);
+        }
 
         FileSystem fs = FileSystem.get(conf);
         if (fs.exists(outputpath)) {
