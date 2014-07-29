@@ -82,12 +82,12 @@ public class Utils {
         return "/user/hadoop/offline/node/" + node + "/" + pid + "/" + date + "-r-0000";
     }
 
-    public static String getUIDCombinePath(String date,String pid){
+    public static String getUIDCombinePath(String pid){
         return "/user/hadoop/offline/pid/" +  pid;
     }
 
-    public static String getProjectCombinePath(String date,String project){
-        return "/user/hadoop/offline/"+date+"/combine/" +  project;
+    public static String getProjectCombinePath(String project){
+        return "/user/hadoop/offline/combine/" +  project;
     }
 
     public static String getProjectCountPath(String date,String project, int range){
