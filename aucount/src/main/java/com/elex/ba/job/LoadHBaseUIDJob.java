@@ -39,21 +39,21 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
 
     private String pid;
     private String node;
-    private String date;
+    private String[] days;
 
 
-    public LoadHBaseUIDJob(String date,String node, String pid){
-        this.date = date;
+    public LoadHBaseUIDJob(String[] days,String node, String pid){
+        this.days = days;
         this.pid = pid;
         this.node = node;
     }
 
     public int run() throws IOException, ClassNotFoundException, InterruptedException, ParseException {
         byte[] table = Bytes.toBytes("deu_" + pid);
-        Path outputpath = new Path(Utils.getHBaseUIDPath(date, node, pid));
+        Path outputpath = new Path(Utils.getHBaseUIDPath(days[0], node, pid));
         Scan scan = new Scan();
 
-        String[] days = Utils.getLastDate(date,30);
+
 
         scan.setStartRow(Bytes.toBytes(days[29] + "visit"));
         scan.setStopRow(Bytes.toBytes(days[0] + "visiu"));

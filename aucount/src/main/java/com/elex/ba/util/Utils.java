@@ -69,7 +69,6 @@ public class Utils {
         for(int i =1;i<num;i++){
             cal.add(5,-1);
             result[i] = format.format(cal.getTime());
-            System.out.println(result[i]);
         }
 
         return result;
@@ -96,7 +95,9 @@ public class Utils {
         System.out.println(week[0] + " " + week[1]);
         String[] month = getDateRange("20140711",30);
         System.out.println(month[0] + " " + month[1]);*/
-        getLastDate("20140728",30);
+        String[] days = Utils.getLastDate("20140728",30);
+        System.out.println(days[0]);
+        System.out.println(days[29]);
     }
 
 }
