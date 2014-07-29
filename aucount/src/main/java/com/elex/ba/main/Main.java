@@ -94,7 +94,7 @@ public class Main {
     }
 
     public static void loadHBaseUID(String date,Set<String> projects,int offset) throws ParseException {
-        ExecutorService service = new ThreadPoolExecutor(25,40,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+        ExecutorService service = new ThreadPoolExecutor(16,16,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
         List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
         String[] days = Utils.getLastDate(date,30);
         for(String pid : projects){
