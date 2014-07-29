@@ -82,7 +82,7 @@ public class UIDCombineJob implements Callable<Integer> {
 
         if (job.isSuccessful()) {
             for(Path p : inputPaths){
-                fs.delete(p, true);
+                //fs.delete(p, true);
             }
             return 0;
         } else {
