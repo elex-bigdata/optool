@@ -115,11 +115,14 @@ public class Main {
         System.out.println("loadHBaseUID finished");
     }
 
-    public static void uidCombine(String date, Set<String> projects){
-        ExecutorService service = new ThreadPoolExecutor(16,20,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+    public static void uidCombine(String date, Set<String> projects) throws ParseException {
+        ExecutorService service = new ThreadPoolExecutor(25,40,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
         List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
-        for(String project : projects){
-            tasks.add(service.submit(new UIDCombineJob(date,project)));
+        String[] days = Utils.getLastDate(date,30);
+        for(String d : days){
+            for(String project : projects){
+                tasks.add(service.submit(new UIDCombineJob(d,project)));
+            }
         }
 
         for(Future f : tasks){

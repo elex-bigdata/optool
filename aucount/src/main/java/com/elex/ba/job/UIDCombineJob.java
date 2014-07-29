@@ -65,13 +65,14 @@ public class UIDCombineJob implements Callable<Integer> {
         FileOutputFormat.setOutputPath(job,outputpath);
         List<Path> inputPaths = new ArrayList<Path>();
         for(int i =0;i<16; i++){
-            Path p = new Path(Utils.getHBaseUIDPath(date,"node" + i,project));
-            if(fs.exists(p)){
-                FileInputFormat.addInputPath(job,p);
-                inputPaths.add(p);
-            }else{
-                throw new RuntimeException("The input path " + p.toString() + " not exist");
+            for(int j=0;j<3;j++){
+                Path p = new Path(Utils.getHBaseUIDPath(date,"node" + i,project) + j);
+                if(fs.exists(p)){
+                    FileInputFormat.addInputPath(job,p);
+                    inputPaths.add(p);
+                }
             }
+
         }
 
         String idmapPath = "/user/hadoop/mysqlidmap/vf_" + project;

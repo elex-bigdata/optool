@@ -51,7 +51,7 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
 
     public int run() throws IOException, ClassNotFoundException, InterruptedException, ParseException {
         byte[] table = Bytes.toBytes("deu_" + pid);
-        Path outputpath = new Path(Utils.getHBaseUIDPath(days[0], node, pid));
+        Path outputpath = new Path(Utils.getHBaseUIDPath(node, pid));
         Scan scan = new Scan();
 
 
