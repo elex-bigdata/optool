@@ -13,7 +13,10 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,16 +34,16 @@ public class ProjectCombineJob implements Callable<Integer> {
 
     private String project ; //internet大分类
     private Set<String> pids; //小项目名
-    private String date;
+    private String[] days;
 
-    public ProjectCombineJob(String date, String project, Set<String> pids){
-        this.date = date;
+    public ProjectCombineJob(String[] days, String project, Set<String> pids){
+        this.days = days;
         this.project = project;
         this.pids = pids;
     }
 
     public int run() throws IOException, ClassNotFoundException, InterruptedException {
-        Path outputpath = new Path(Utils.getProjectCombinePath(date,project));
+        Path outputpath = new Path(Utils.getProjectCombinePath(project));
 
 
         Configuration conf = new Configuration();
@@ -53,14 +56,17 @@ public class ProjectCombineJob implements Callable<Integer> {
         Job job = new Job(conf,"pcombine_" + project);
         job.setJarByClass(ProjectCombineJob.class);
         job.setMapperClass(ProjectCombineMapper.class);
-        job.setCombinerClass(ProjectCombineReducer.class);
         job.setReducerClass(ProjectCombineReducer.class);
-        job.setInputFormatClass(TextCombineInputformat.class);
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(NullWritable.class);
+        job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
-        job.setNumReduceTasks(10);
+//        job.setNumReduceTasks(10);
+
+        for(String d : days){
+            MultipleOutputs.addNamedOutput(job, d, TextOutputFormat.class, Text.class, Text.class);
+        }
 
         FileSystem fs = FileSystem.get(conf);
         if (fs.exists(outputpath)) {
@@ -70,7 +76,7 @@ public class ProjectCombineJob implements Callable<Integer> {
         FileOutputFormat.setOutputPath(job,outputpath);
         List<Path> inputPaths = new ArrayList<Path>();
         for(String pid : pids){
-            Path p = new Path(Utils.getUIDCombinePath(date,pid));
+            Path p = new Path(Utils.getUIDCombinePath(pid));
             if(fs.exists(p)){
                 FileInputFormat.addInputPath(job,p);
                 inputPaths.add(p);
@@ -83,7 +89,7 @@ public class ProjectCombineJob implements Callable<Integer> {
 
         if (job.isSuccessful()) {
             for(Path p : inputPaths){
-                fs.delete(p, true);
+//                fs.delete(p, true);
             }
             return 0;
         } else {

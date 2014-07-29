@@ -137,12 +137,14 @@ public class Main {
         System.out.println("uidCombine finished");
     }
 
-    public static void projectCombine(String date, Map<String,Set<String>> projects){
+    public static void projectCombine(String date, Map<String,Set<String>> projects) throws ParseException {
         ExecutorService service = new ThreadPoolExecutor(16,20,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
         List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
+        String[] days = Utils.getLastDate(date,30);
         for(String p : projects.keySet()){
-            tasks.add(service.submit(new ProjectCombineJob(date, p, projects.get(p))));
+            tasks.add(service.submit(new ProjectCombineJob(days, p, projects.get(p))));
         }
+
 
         for(Future f : tasks){
             try {

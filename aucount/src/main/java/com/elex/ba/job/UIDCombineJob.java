@@ -38,7 +38,7 @@ public class UIDCombineJob implements Callable<Integer> {
     }
 
     public int run(String project) throws IOException, ClassNotFoundException, InterruptedException {
-        Path outputpath = new Path(Utils.getUIDCombinePath(date,project));
+        Path outputpath = new Path(Utils.getUIDCombinePath(project));
 
         Configuration conf = new Configuration();
         conf.set("mapred.child.java.opts", "-Xmx1024m");
