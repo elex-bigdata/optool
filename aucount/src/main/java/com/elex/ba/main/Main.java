@@ -118,12 +118,12 @@ public class Main {
     public static void uidCombine(String date, Set<String> projects) throws ParseException {
         ExecutorService service = new ThreadPoolExecutor(25,40,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
         List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
-        String[] days = Utils.getLastDate(date,30);
-        for(String d : days){
+//        String[] days = Utils.getLastDate(date,30);
+//        for(String d : days){
             for(String project : projects){
-                tasks.add(service.submit(new UIDCombineJob(d,project)));
+                tasks.add(service.submit(new UIDCombineJob(date,project)));
             }
-        }
+//        }
 
         for(Future f : tasks){
             try {

@@ -82,9 +82,9 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
         job.setOutputValueClass(Text.class);
         job.setNumReduceTasks(3);
 
-        for(String d : days){
+/*        for(String d : days){
             MultipleOutputs.addNamedOutput(job, d, TextOutputFormat.class, Text.class, Text.class);
-        }
+        }*/
 
         FileSystem fs = FileSystem.get(conf);
         if (fs.exists(outputpath)) {

@@ -1,5 +1,6 @@
 package com.elex.ba.reducer;
 
+import com.elex.ba.util.Constants;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -16,13 +17,13 @@ import java.util.Set;
  */
 public class LoadHBaseUIDReducer extends Reducer<Text,Text,Text,Text> {
 
-    private Text empty = new Text("");
-    private MultipleOutputs<Text,Text> mos;
+//    private Text empty = new Text("");
+//    private MultipleOutputs<Text,Text> mos;
 
     @Override
     protected void setup(Context context)
             throws IOException, InterruptedException {
-        mos=new MultipleOutputs(context);
+//        mos=new MultipleOutputs(context);
     }
 
     @Override
@@ -32,12 +33,12 @@ public class LoadHBaseUIDReducer extends Reducer<Text,Text,Text,Text> {
             days.add(day.toString());
         }
         for(String day : days){
-            mos.write(day,key,empty);
+            context.write(key,new Text(Constants.mau_month_prefix + day));
         }
 
     }
 
-    protected void cleanup(Context context) throws IOException,InterruptedException {
+/*    protected void cleanup(Context context) throws IOException,InterruptedException {
         mos.close();
-    }
+    }*/
 }

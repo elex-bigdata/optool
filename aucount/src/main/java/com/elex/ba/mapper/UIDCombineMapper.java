@@ -16,7 +16,7 @@ public class UIDCombineMapper extends Mapper<Text,Text,Text,Text>{
 
     @Override
     protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
-        if(value.toString().length() == 0){ //来自HBase
+        if(value.toString().startsWith(Constants.mau_month_prefix )){ //来自HBase
             context.write(key,value);
         }else{
             //将MYSQL的uid做MD5转换 与HBASE的UID 格式一致

@@ -14,20 +14,23 @@ import java.util.Set;
  * Date: 14-6-6
  * Time: 下午6:51
  */
-public class UIDCombineReducer extends Reducer<Text,Text,Text,NullWritable> {
+public class UIDCombineReducer extends Reducer<Text,Text,Text,Text> {
 
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+        Set<String> months = new HashSet<String>();
+        String orguid = "";
         for(Text val : values){
             String data = val.toString();
-            if(data.length() != 0){
-                context.write(new Text(data),NullWritable.get());
-                break;
+            if(data.startsWith(Constants.mau_month_prefix)){
+                months.add(data.substring(Constants.mau_month_prefix.length()));
+            }else{
+                orguid = data;
             }
         }
 
-   /*     for(String month : months){
+        for(String month : months){
             context.write(new Text(orguid),new Text(month));
-        }*/
+        }
     }
 }

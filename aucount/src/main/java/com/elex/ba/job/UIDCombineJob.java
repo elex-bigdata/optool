@@ -55,7 +55,7 @@ public class UIDCombineJob implements Callable<Integer> {
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(NullWritable.class);
+        job.setOutputValueClass(Text.class);
         job.setNumReduceTasks(5);
 
         FileSystem fs = FileSystem.get(conf);
@@ -66,14 +66,11 @@ public class UIDCombineJob implements Callable<Integer> {
         FileOutputFormat.setOutputPath(job,outputpath);
         List<Path> inputPaths = new ArrayList<Path>();
         for(int i =0;i<16; i++){
-            for(int j=0;j<3;j++){
-                Path p = new Path(Utils.getHBaseUIDPath(date,"node" + i,project) + j);
-                if(fs.exists(p)){
-                    FileInputFormat.addInputPath(job,p);
-                    inputPaths.add(p);
-                }
+            Path p = new Path(Utils.getHBaseUIDPath("node" + i,project) );
+            if(fs.exists(p)){
+                FileInputFormat.addInputPath(job,p);
+                inputPaths.add(p);
             }
-
         }
 
         String idmapPath = "/user/hadoop/mysqlidmap/vf_" + project;
