@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -38,6 +39,8 @@ public class OpServlet extends HttpServlet {
 
         }else if("tuid".equals(req.getParameter("action"))){
             transformUID(req, resp);
+        }else if("convertTime".equals(req.getParameter("action"))){
+            convertTime(req, resp);
         }
 
     }
@@ -79,7 +82,7 @@ public class OpServlet extends HttpServlet {
     }
 
 
-    private void transformUID(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void convertTime(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] uids = req.getParameter("uids").trim().split(",");
         String project = req.getParameter("project");
         String idType = req.getParameter("idtype");
@@ -106,5 +109,31 @@ public class OpServlet extends HttpServlet {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void transformUID(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Map<String,String> result = new HashMap<String, String>();
+        try{
+            long time = Long.parseLong(req.getParameter("time"));
+
+            Date d = new Date(time);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String formatDate = sdf.format(d);
+            result.put("success","true");
+            result.put("result",formatDate);
+        }catch(Exception e){
+            result.put("success","false");
+            result.put("msg",e.getMessage());
+        }
+
+
+        try {
+            PrintWriter pw = new PrintWriter(resp.getOutputStream());
+            pw.write(new Gson().toJson(result));
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
