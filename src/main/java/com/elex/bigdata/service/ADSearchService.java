@@ -55,7 +55,7 @@ public class ADSearchService {
             int ab = 0;
             //0，未指定 1，游戏 2，电商 99，其他
             if(debug){
-                LOG.debug("-------------------");
+                LOG.debug("------hit-------------");
             }
             for (Result r : rs) {
                 if(debug){
@@ -101,7 +101,7 @@ public class ADSearchService {
         }
     }
 
-    public int count(String tableName, int pid, Long startTime, Long endTime, String nation ) throws Exception{
+    public int count(String tableName, int pid, Long startTime, Long endTime, String nation, boolean debug ) throws Exception{
         HTableInterface hTable = null;
         try{
             hTable = HBaseUtil.getHTable(tableName);
@@ -115,7 +115,14 @@ public class ADSearchService {
 
             ResultScanner rs = hTable.getScanner(scan);
             int count = 0;
+            if(debug){
+                LOG.debug("------all-------------");
+            }
             for (Result r : rs) {
+                if(debug){
+                    String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
+                    LOG.debug(uid);
+                }
                 count ++;
             }
             return count ;
