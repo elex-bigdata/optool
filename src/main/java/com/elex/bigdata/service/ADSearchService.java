@@ -55,7 +55,7 @@ public class ADSearchService {
             int ab = 0;
             //0，未指定 1，游戏 2，电商 99，其他
             if(debug){
-                LOG.debug("------hit-------------");
+                LOG.debug("------" + pid + " hit-------------");
             }
             for (Result r : rs) {
                 if(debug){
@@ -116,7 +116,7 @@ public class ADSearchService {
             ResultScanner rs = hTable.getScanner(scan);
             int count = 0;
             if(debug){
-                LOG.debug("------all-------------");
+                LOG.debug("------" + pid + " all-------------");
             }
             for (Result r : rs) {
                 if(debug){
