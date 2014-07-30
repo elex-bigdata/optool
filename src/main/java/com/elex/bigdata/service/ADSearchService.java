@@ -59,7 +59,7 @@ public class ADSearchService {
             }
             for (Result r : rs) {
                 if(debug){
-                    String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 9));
+                    String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
                     LOG.debug(uid);
                 }
                 KeyValue kv = r.getColumnLatest(cf,t);
