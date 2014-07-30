@@ -91,10 +91,10 @@ class myThread (threading.Thread):
                 day6percent = str(day6percent*100) + "%"
 
             content += "<tr><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td></tr>\n"%(sd[0],data["new"],data["uninstall"],day2percent,day6percent)
-            if isinstance(data[1]["new"], int):
-                totalNew += data[1]["new"]
-            if isinstance(data[1]["uninstall"], int):
-                totalUninstall += data[1]["nuninstallew"]
+            if isinstance(data["new"], int):
+                totalNew += data["new"]
+            if isinstance(data["uninstall"], int):
+                totalUninstall += data["nuninstallew"]
         content += "<tr><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td></tr>\n"%("",totalNew,totalUninstall,"","")
 
         content +="</table></br></div>"
