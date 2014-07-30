@@ -2,6 +2,8 @@ package com.elex.bigdata.service;
 
 import com.elex.bigdata.hbase.HBaseUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.Result;
@@ -20,7 +22,9 @@ import java.util.Map;
  */
 public class ADSearchService {
 
-    public String countHit(String tableName, int pid, Long startTime, Long endTime, String nation ) throws Exception{
+    public static final Log LOG = LogFactory.getLog(ADSearchService.class);
+
+    public String countHit(String tableName, int pid, Long startTime, Long endTime, String nation, boolean debug ) throws Exception{
         HTableInterface hTable = null;
         try{
             hTable = HBaseUtil.getHTable(tableName);
@@ -33,8 +37,8 @@ public class ADSearchService {
             byte[] t = Bytes.toBytes("t");
 
             Map<String,Integer> catMap = new HashMap<String,Integer>();
-            catMap.put("a",1);
-            catMap.put("b",2);
+            catMap.put("a", 1);
+            catMap.put("b", 2);
             catMap.put("d",4);
 
             scan.addFamily(cf);
@@ -50,7 +54,14 @@ public class ADSearchService {
             int miss = 0;
             int ab = 0;
             //0，未指定 1，游戏 2，电商 99，其他
+            if(debug){
+                LOG.debug("-------------------");
+            }
             for (Result r : rs) {
+                if(debug){
+                    String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 9));
+                    LOG.debug(uid);
+                }
                 KeyValue kv = r.getColumnLatest(cf,t);
                 int cat = Bytes.toInt(r.getColumnLatest(cf,c).getValue());
                 if(kv == null){
@@ -100,7 +111,7 @@ public class ADSearchService {
             scan.setStopRow(startStopRow[1]);
             scan.setFilter(new KeyOnlyFilter());
             scan.setCaching(1000);
-            scan.setTimeRange(startTime,endTime);
+            scan.setTimeRange(startTime, endTime);
 
             ResultScanner rs = hTable.getScanner(scan);
             int count = 0;

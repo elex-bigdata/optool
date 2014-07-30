@@ -44,6 +44,10 @@
         var endTime = $("#endTime").val();
         var nation = $("#nation").val();
         var pid = $("#pid").val();
+        var debug = "false";
+        if($("#debug").checked){
+            debug = "true"
+        }
 
         if(!startTime || !endTime){
             alert("时间不能为空");
@@ -66,7 +70,7 @@
         $.ajax({
             type: 'POST',
             url:"ad",
-            data:'action=hit&startTime=' + startTime + "&endTime=" + endTime + "&nation=" + nation + "&pid=" + pid,
+            data:'action=hit&startTime=' + startTime + "&endTime=" + endTime + "&nation=" + nation + "&pid=" + pid +"&debug=" + debug,
             success: function(msg){
                 $("#content").html(msg);
             }
@@ -80,6 +84,7 @@
     开始时间：<input name="startTime" id="startTime" />
     结束时间：<input name="endTime" id="endTime" />
     Nation: <input name="nation" id="nation"/>
+    DEBUG: <input name="debug" type="checkbox" id="debug"/>
 
     <input type="button" value="查询" onclick="query()"/> <br/>
     <br/>

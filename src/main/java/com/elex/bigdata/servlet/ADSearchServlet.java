@@ -57,6 +57,11 @@ public class ADSearchServlet extends HttpServlet {
         String endTime = req.getParameter("endTime");
         String nation = req.getParameter("nation");
         String pid = req.getParameter("pid");
+        String db = req.getParameter("debug");
+        boolean debug = false;
+        if(db != null && "true".equals(db)){
+            debug = true;
+        }
 
         String tableName = "ad_all_log";
 
@@ -75,7 +80,7 @@ public class ADSearchServlet extends HttpServlet {
 
         ADSearchService service = new ADSearchService();
         try {
-            String result = service.countHit(tableName,Integer.parseInt(pid),start,end,nation);
+            String result = service.countHit(tableName,Integer.parseInt(pid),start,end,nation,debug);
             int count = service.count(tableName,Integer.parseInt(pid),start,end,nation);
             PrintWriter pw = new PrintWriter(resp.getOutputStream());
             pw.write(result + ",total:" + count);
