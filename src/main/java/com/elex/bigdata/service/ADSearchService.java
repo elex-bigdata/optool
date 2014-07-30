@@ -121,7 +121,7 @@ public class ADSearchService {
             for (Result r : rs) {
                 if(debug){
                     String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
-                    long time = Bytes.toLong(Bytes.head(Bytes.tail(r.getRow(),3),8));
+                    long time = Bytes.toLong(Bytes.head(Bytes.tail(r.getRow(),r.getRow().length-3),8));
                     LOG.debug(uid + " " + time);
                 }
                 count ++;
