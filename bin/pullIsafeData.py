@@ -94,7 +94,7 @@ class myThread (threading.Thread):
             if isinstance(data["new"], int):
                 totalNew += data["new"]
             if isinstance(data["uninstall"], int):
-                totalUninstall += data["nuninstallew"]
+                totalUninstall += data["uninstall"]
         content += "<tr><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td><td style='border:1px solid'>%s</td></tr>\n"%("",totalNew,totalUninstall,"","")
 
         content +="</table></br></div>"
