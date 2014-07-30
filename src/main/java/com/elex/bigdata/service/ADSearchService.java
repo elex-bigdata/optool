@@ -75,7 +75,7 @@ public class ADSearchService {
                     }
                     if(debug){
                         String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
-                        LOG.debug(uid + " " + r.getColumnLatest(cf,a).getTimestamp() + " " + max);
+                        LOG.debug(uid + " " + r.getColumnLatest(cf,a).getTimestamp() + " " + max + "," + cat);
                     }
                 }else{
                     //b.19,a.21,z.60 a.游戏 b.电商 d. z.未知
