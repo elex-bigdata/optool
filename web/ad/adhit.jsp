@@ -45,7 +45,7 @@
         var nation = $("#nation").val();
         var pid = $("#pid").val();
         var debug = "false";
-        if($("#debug").checked){
+        if($("#debug").is(':checked')){
             debug = "true"
         }
 
