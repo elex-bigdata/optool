@@ -82,7 +82,7 @@ public class OpServlet extends HttpServlet {
     }
 
 
-    private void convertTime(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void transformUID(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] uids = req.getParameter("uids").trim().split(",");
         String project = req.getParameter("project");
         String idType = req.getParameter("idtype");
@@ -111,7 +111,7 @@ public class OpServlet extends HttpServlet {
         }
     }
 
-    private void transformUID(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void convertTime(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Map<String,String> result = new HashMap<String, String>();
         try{
             long time = Long.parseLong(req.getParameter("time"));
