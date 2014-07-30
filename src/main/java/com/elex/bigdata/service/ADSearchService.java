@@ -58,10 +58,7 @@ public class ADSearchService {
                 LOG.debug("------" + pid + " hit-------------");
             }
             for (Result r : rs) {
-                if(debug){
-                    String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
-                    LOG.debug(uid);
-                }
+
                 KeyValue kv = r.getColumnLatest(cf,t);
                 int cat = Bytes.toInt(r.getColumnLatest(cf,c).getValue());
                 if(kv == null){
@@ -76,7 +73,10 @@ public class ADSearchService {
                     }else{
                         miss++;
                     }
-
+                    if(debug){
+                        String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
+                        LOG.debug(uid + " " + r.getColumnLatest(cf,a).getTimestamp() + " " + max);
+                    }
                 }else{
                     //b.19,a.21,z.60 a.游戏 b.电商 d. z.未知
                     String tStr = Bytes.toString(r.getColumnLatest(cf,t).getValue());
@@ -121,7 +121,8 @@ public class ADSearchService {
             for (Result r : rs) {
                 if(debug){
                     String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
-                    LOG.debug(uid);
+                    long time = Bytes.toLong(Bytes.head(Bytes.tail(r.getRow(),3),8));
+                    LOG.debug(uid + " " + time);
                 }
                 count ++;
             }
