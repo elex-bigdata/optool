@@ -5,7 +5,8 @@
 	]
     },
     { text: '工具箱', isexpand: false, children: [
-		{ url: "op/uid.jsp", text: "UID转换" }
+		{ url: "op/uid.jsp", text: "UID转换" },
+        { url: "op/tools.jsp", text: "小工具" }
 	]
     },
     { text: '系统检测', isexpand: false, children: [
