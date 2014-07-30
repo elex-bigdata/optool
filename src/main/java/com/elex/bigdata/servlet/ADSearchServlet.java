@@ -81,7 +81,7 @@ public class ADSearchServlet extends HttpServlet {
         ADSearchService service = new ADSearchService();
         try {
             String result = service.countHit(tableName,Integer.parseInt(pid),start,end,nation,debug);
-            int count = service.count(tableName,Integer.parseInt(pid),start,end,nation);
+            int count = service.count(tableName,Integer.parseInt(pid),start,end,nation,debug);
             PrintWriter pw = new PrintWriter(resp.getOutputStream());
             pw.write(result + ",total:" + count);
             pw.close();
