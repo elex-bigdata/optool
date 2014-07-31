@@ -19,6 +19,14 @@
         $('#endTime').calendar({format:'yyyy-MM-dd HH:mm:ss'});
 
         loadProjects();
+
+        $('#debug').change(function() {
+            if($(this).is(":checked")) {
+                $("#info").show();
+            }else{
+                $("#info").hide();
+            }
+        });
     })
 
     function loadProjects(){
@@ -72,7 +80,19 @@
             url:"ad",
             data:'action=hit&startTime=' + startTime + "&endTime=" + endTime + "&nation=" + nation + "&pid=" + pid +"&debug=" + debug,
             success: function(msg){
-                $("#content").html(msg);
+                $("#content").html(msg.count);
+                if(debug){
+                    info = "----Rec-------<br/>";
+                    for( i in msg.hit){
+                        info += msg.hit[i] + "<br/>"
+                    }
+                    info += "----All--------<br/>"
+                    for( i in msg.all){
+                        info += msg.all[i] + "<br/>"
+                    }
+                    $("#info").html(info);
+                    $("#info").show();
+                }
             }
         });
     }
@@ -91,6 +111,9 @@
     <br/>
 
     <div id="content" style="height:200px;width: 400px;background: #000000;color: #ffffff" >
+
+    </div>
+    <div id="info" style="background: #000000;color: #ffffff;display:none" >
 
     </div>
 

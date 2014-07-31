@@ -12,7 +12,9 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,7 +26,7 @@ public class ADSearchService {
 
     public static final Log LOG = LogFactory.getLog(ADSearchService.class);
 
-    public String countHit(String tableName, int pid, Long startTime, Long endTime, String nation, boolean debug ) throws Exception{
+    public Map countHit(String tableName, int pid, Long startTime, Long endTime, String nation, boolean debug ) throws Exception{
         HTableInterface hTable = null;
         try{
             hTable = HBaseUtil.getHTable(tableName);
@@ -48,15 +50,12 @@ public class ADSearchService {
             scan.setCaching(1000);
             scan.setTimeRange(startTime,endTime);
 
-
             ResultScanner rs = hTable.getScanner(scan);
             int hit = 0;
             int miss = 0;
             int ab = 0;
             //0，未指定 1，游戏 2，电商 99，其他
-            if(debug){
-                LOG.debug("------" + pid + " hit-------------");
-            }
+            List<String> debugLines = new ArrayList<String>();
             for (Result r : rs) {
 
                 KeyValue kv = r.getColumnLatest(cf,t);
@@ -75,7 +74,7 @@ public class ADSearchService {
                     }
                     if(debug){
                         String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
-                        LOG.debug(uid + " " + r.getColumnLatest(cf,a).getTimestamp() + " " + catMap.get(max) + "," + cat);
+                        debugLines.add(uid + " " + r.getColumnLatest(cf,a).getTimestamp() + " " + catMap.get(max) + "," + cat);
                     }
                 }else{
                     //b.19,a.21,z.60 a.游戏 b.电商 d. z.未知
@@ -91,7 +90,11 @@ public class ADSearchService {
 
 
             }
-            return "ab:" + ab + ", hit:" + hit + ", miss:" + miss ;
+            Map result = new HashMap();
+            result.put("count","ab:" + ab + ", hit:" + hit + ", miss:" + miss );
+            result.put("hit",debugLines);
+
+            return result;
         }catch (Exception e){
             throw e;
         }finally {
@@ -101,7 +104,7 @@ public class ADSearchService {
         }
     }
 
-    public int count(String tableName, int pid, Long startTime, Long endTime, String nation, boolean debug ) throws Exception{
+    public Map count(String tableName, int pid, Long startTime, Long endTime, String nation, boolean debug ) throws Exception{
         HTableInterface hTable = null;
         try{
             hTable = HBaseUtil.getHTable(tableName);
@@ -118,15 +121,19 @@ public class ADSearchService {
             if(debug){
                 LOG.debug("------" + pid + " all-------------");
             }
+            List<String> debugLines = new ArrayList<String>();
             for (Result r : rs) {
                 if(debug){
                     String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
                     long time = Bytes.toLong(Bytes.head(Bytes.tail(r.getRow(),r.getRow().length-3),8));
-                    LOG.debug(uid + " " + time);
+                    debugLines.add(uid + " " + time);
                 }
                 count ++;
             }
-            return count ;
+            Map result = new HashMap();
+            result.put("count",count);
+            result.put("all",debugLines);
+            return result ;
         }catch (Exception e){
             throw e;
         }finally {

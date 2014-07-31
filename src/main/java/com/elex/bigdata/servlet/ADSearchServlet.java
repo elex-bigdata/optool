@@ -80,10 +80,14 @@ public class ADSearchServlet extends HttpServlet {
 
         ADSearchService service = new ADSearchService();
         try {
-            String result = service.countHit(tableName,Integer.parseInt(pid),start,end,nation,debug);
-            int count = service.count(tableName,Integer.parseInt(pid),start,end,nation,debug);
+            Map result = service.countHit(tableName,Integer.parseInt(pid),start,end,nation,debug);
+            Map count = service.count(tableName,Integer.parseInt(pid),start,end,nation,debug);
+
+            result.put("count",result.get("count") + ",total:" + count.get("count"));
+            result.put("all",count.get("all"));
+
             PrintWriter pw = new PrintWriter(resp.getOutputStream());
-            pw.write(result + ",total:" + count);
+            pw.write(new Gson().toJson(result));
             pw.close();
         } catch (Exception e) {
             e.printStackTrace();
