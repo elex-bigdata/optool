@@ -78,6 +78,7 @@
         $.ajax({
             type: 'POST',
             url:"ad",
+            dataType: 'json',
             data:'action=hit&startTime=' + startTime + "&endTime=" + endTime + "&nation=" + nation + "&pid=" + pid +"&debug=" + debug,
             success: function(msg){
                 $("#content").html(msg.count);
@@ -113,6 +114,11 @@
     <div id="content" style="height:200px;width: 400px;background: #000000;color: #ffffff" >
 
     </div>
+
+    <br/>
+    <br/>
+    <br/>
+    debug<br/>
     <div id="info" style="background: #000000;color: #ffffff;display:none" >
 
     </div>
