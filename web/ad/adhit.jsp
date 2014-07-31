@@ -75,6 +75,7 @@
         console.info(startTime + " : " + endTime + " : " + nation + " : " + pid)
 
         $("#content").html("");
+        $("#info").html("");
         $.ajax({
             type: 'POST',
             url:"ad",
@@ -82,7 +83,7 @@
             data:'action=hit&startTime=' + startTime + "&endTime=" + endTime + "&nation=" + nation + "&pid=" + pid +"&debug=" + debug,
             success: function(msg){
                 $("#content").html(msg.count);
-                if(debug){
+                if(debug == "true"){
                     info = "----Rec-------<br/>";
                     for( i in msg.hit){
                         info += msg.hit[i] + "<br/>"
