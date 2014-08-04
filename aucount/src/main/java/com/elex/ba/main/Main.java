@@ -140,7 +140,7 @@ public class Main {
     public static void projectCombine(String date, Map<String,Set<String>> projects) throws ParseException {
         ExecutorService service = new ThreadPoolExecutor(16,20,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
         List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
-        String[] days = Utils.getLastDate(date,30);
+        String[] days = Utils.getLastDate(date,3);
         for(String p : projects.keySet()){
             tasks.add(service.submit(new ProjectCombineJob(days, p, projects.get(p))));
         }
