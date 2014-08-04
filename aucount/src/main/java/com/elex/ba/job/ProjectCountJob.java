@@ -69,7 +69,7 @@ public class ProjectCountJob implements Callable<Integer> {
             if(i >0){
                 newDate = Utils.getLastDate(newDate);
             }
-            Path p = new Path(Utils.getProjectCombinePath(newDate,project));
+            Path p = new Path(Utils.getProjectCombinePath(project));
 
             if(fs.exists(p)){
                 FileInputFormat.addInputPath(job,p);
