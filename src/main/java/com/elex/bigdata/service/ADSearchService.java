@@ -1,6 +1,7 @@
 package com.elex.bigdata.service;
 
 import com.elex.bigdata.hbase.HBaseUtil;
+import com.elex.bigdata.util.Constant;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,10 +13,7 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Author: liqiang
@@ -74,7 +72,7 @@ public class ADSearchService {
                     }
                     if(debug){
                         String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
-                        debugLines.add(uid + " " + r.getColumnLatest(cf,a).getTimestamp() + " " + catMap.get(max) + "," + cat);
+                        debugLines.add(uid + " " + Constant.dfmt.format(new Date(r.getColumnLatest(cf,a).getTimestamp())) + " " + catMap.get(max) + "," + cat);
                     }
                 }else{
                     //b.19,a.21,z.60 a.游戏 b.电商 d. z.未知
@@ -106,15 +104,20 @@ public class ADSearchService {
 
     public Map count(String tableName, int pid, Long startTime, Long endTime, String nation, boolean debug ) throws Exception{
         HTableInterface hTable = null;
+        byte[] fm = Bytes.toBytes("basis");
+        byte[] qf = Bytes.toBytes("c");
         try{
             hTable = HBaseUtil.getHTable(tableName);
             Scan scan = new Scan();
             byte[][] startStopRow = getStartStopRow(pid,startTime,endTime,nation);
             scan.setStartRow(startStopRow[0]);
             scan.setStopRow(startStopRow[1]);
-            scan.setFilter(new KeyOnlyFilter());
+//            scan.setFilter(new KeyOnlyFilter());
+            scan.addColumn(fm,qf);
             scan.setCaching(1000);
             scan.setTimeRange(startTime, endTime);
+
+
 
             ResultScanner rs = hTable.getScanner(scan);
             int count = 0;
@@ -125,9 +128,11 @@ public class ADSearchService {
             for (Result r : rs) {
                 if(debug){
                     String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
-                    long time = Bytes.toLong(Bytes.head(Bytes.tail(r.getRow(),r.getRow().length-3),8));
-                    debugLines.add(uid + " " + time);
+                    long time = r.getColumnLatest(fm,qf).getTimestamp();
+//                    long time = Bytes.toLong(Bytes.head(Bytes.tail(r.getRow(),r.getRow().length-3),8));
+                    debugLines.add(uid + " " + Constant.dfmt.format(new Date(time)) + " " + Bytes.toString(r.getColumnLatest(fm,qf).getValue()));
                 }
+
                 count ++;
             }
             Map result = new HashMap();
