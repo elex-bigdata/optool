@@ -11,5 +11,5 @@ public interface Constant {
     public static final String[] xa_cluster = {"node0","node1","node2","node3","node4","node5","node6","node7",
                                                 "node8","node9","node10","node11","node12","node13","node14","node15"};
 
-    public static SimpleDateFormat dfmt = new SimpleDateFormat("yyyyMMddhhmmss");
+    public static SimpleDateFormat dfmt = new SimpleDateFormat("yyyyMMddHHmmss");
 }
