@@ -51,7 +51,7 @@ public class ADSearchServlet extends HttpServlet {
 
     private void countHit(HttpServletRequest req, HttpServletResponse resp){
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String startTime = req.getParameter("startTime");
         String endTime = req.getParameter("endTime");
