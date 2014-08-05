@@ -68,6 +68,7 @@ class ScanUID implements Callable<List<String>>{
     public List<String> call() throws Exception {
         Configuration conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum", node);
+        conf.set("hbase.zookeeper.property.clientPort", "3181");
 
         Scan scan = new Scan();
         scan.setStartRow(Bytes.toBytes(startKey));
