@@ -29,7 +29,7 @@ public class ScanHBaseUID {
 
 
 
-        ExecutorService service = new ThreadPoolExecutor(25,40,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+        ExecutorService service = Executors.newFixedThreadPool(16);
         List<Future<List<String>>> tasks = new ArrayList<Future<List<String>>>();
 
         for(int i=0;i<16;i++){
@@ -45,6 +45,8 @@ public class ScanHBaseUID {
                 e.printStackTrace();
             }
         }
+
+        service.shutdownNow();
 
     }
 
