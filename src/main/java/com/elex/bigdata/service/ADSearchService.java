@@ -138,6 +138,7 @@ public class ADSearchService {
             Map result = new HashMap();
             result.put("count",count);
             result.put("all",debugLines);
+            rs.close();
             return result ;
         }catch (Exception e){
             throw e;
