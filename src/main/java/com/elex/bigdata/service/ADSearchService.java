@@ -106,6 +106,7 @@ public class ADSearchService {
         HTableInterface hTable = null;
         byte[] fm = Bytes.toBytes("basis");
         byte[] qf = Bytes.toBytes("c");
+        byte[] gidCol = Bytes.toBytes("gid");
         try{
             hTable = HBaseUtil.getHTable(tableName);
             Scan scan = new Scan();
@@ -114,6 +115,7 @@ public class ADSearchService {
             scan.setStopRow(startStopRow[1]);
 //            scan.setFilter(new KeyOnlyFilter());
             scan.addColumn(fm,qf);
+            scan.addColumn(fm,gidCol);
             scan.setCaching(1000);
             scan.setTimeRange(startTime, endTime);
 
@@ -130,7 +132,8 @@ public class ADSearchService {
                     String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
                     long time = r.getColumnLatest(fm,qf).getTimestamp();
 //                    long time = Bytes.toLong(Bytes.head(Bytes.tail(r.getRow(),r.getRow().length-3),8));
-                    debugLines.add(uid + " " + Constant.dfmt.format(new Date(time)) + " " + Bytes.toString(r.getColumnLatest(fm,qf).getValue()));
+                    String gid = Bytes.toString(r.getColumnLatest(fm,gidCol).getValue());
+                    debugLines.add(uid + " " + Constant.dfmt.format(new Date(time)) + " " + Bytes.toString(r.getColumnLatest(fm,qf).getValue()) + " " + gid);
                 }
 
                 count ++;
