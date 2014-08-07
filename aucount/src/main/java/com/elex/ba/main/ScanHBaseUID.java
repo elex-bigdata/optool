@@ -82,9 +82,14 @@ class ScanUID implements Callable<List<String>>{
         HTable table = new HTable(conf,"deu_" + tableName);
         ResultScanner scanner = table.getScanner(scan);
         List<String> results = new ArrayList<String>();
-        for(Result r : scanner){
-            long uid = Utils.transformerUID(Bytes.tail(r.getRow(), 5));
-            results.add(uid + "");
+        try{
+            for(Result r : scanner){
+                long uid = Utils.transformerUID(Bytes.tail(r.getRow(), 5));
+                results.add(uid + "");
+            }
+        }finally {
+            scanner.close();
+            table.close();
         }
         return results;
     }
