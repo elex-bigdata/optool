@@ -31,7 +31,7 @@ public class ScanHBaseUID {
         String endKey = args[2];
 
         ExecutorService service = Executors.newFixedThreadPool(16);
-        List<Future<List<Long>>> tasks = new ArrayList<Future<List<Long>>>();
+        List<Future<Map<Long,Long>>> tasks = new ArrayList<Future<Map<Long,Long>>>();
 
         for(int i=0;i<16;i++){
             tasks.add(service.submit(new ScanUID("node" + i,pid,startKey,endKey)));
@@ -41,11 +41,13 @@ public class ScanHBaseUID {
 
         int all = 0;
 
-        for(Future<List<Long>> uids : tasks){
+        Map<Long,Long> allUidSampleUid = new HashMap<Long, Long>();
+        for(Future<Map<Long,Long>> uids : tasks){
             try{
-                List<Long> rs = uids.get();
+                Map<Long,Long> rs = uids.get();
                 all += rs.size();
-                allUid.addAll(rs);
+                allUid.addAll(rs.keySet());
+                allUidSampleUid.putAll(rs);
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -60,7 +62,7 @@ public class ScanHBaseUID {
         Map<Long,String> result = shu.executeSqlTrue(pid,allUid);
 
         for(Map.Entry<Long,String> s : result.entrySet()){
-            System.out.println(s.getKey() + " " + s.getValue());
+            System.out.println(s.getKey() + " " + s.getValue() + " " + allUidSampleUid.get(s.getKey()));
         }
 
 
@@ -119,7 +121,7 @@ public class ScanHBaseUID {
 
 }
 
-class ScanUID implements Callable<List<Long>>{
+class ScanUID implements Callable<Map<Long,Long>>{
 
     String node;
     String tableName;
@@ -134,7 +136,7 @@ class ScanUID implements Callable<List<Long>>{
     }
 
     @Override
-    public List<Long> call() throws Exception {
+    public Map<Long,Long> call() throws Exception {
         Configuration conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum", node);
         conf.set("hbase.zookeeper.property.clientPort", "3181");
@@ -148,11 +150,11 @@ class ScanUID implements Callable<List<Long>>{
 
         HTable table = new HTable(conf,"deu_" + tableName);
         ResultScanner scanner = table.getScanner(scan);
-        List<Long> results = new ArrayList<Long>();
+        Map<Long,Long> results = new HashMap<Long,Long>();
         try{
             for(Result r : scanner){
                 long uid = Utils.transformerUID(Bytes.tail(r.getRow(), 5));
-                results.add(Utils.truncate(uid));
+                results.put(Utils.truncate(uid), uid);
             }
         }finally {
             scanner.close();
