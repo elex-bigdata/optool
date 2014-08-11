@@ -58,8 +58,8 @@ public class LoadHBaseUIDJob implements Callable<Integer> {
 
   /*      scan.setStartRow(Bytes.toBytes(days[days.length-1] + "visit"));
         scan.setStopRow(Bytes.toBytes(days[0] + "visiu"));*/
-        scan.setStartRow(Bytes.toBytes("20140729visit"));
-        scan.setStopRow(Bytes.toBytes("20140731visiu"));
+        scan.setStartRow(Bytes.toBytes("20140808visit"));
+        scan.setStopRow(Bytes.toBytes("20140808visiu"));
         scan.setMaxVersions(1); //只需要一个version
         scan.setCaching(10000);
         scan.setFilter(new KeyOnlyFilter());
