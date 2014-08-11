@@ -61,6 +61,10 @@ public class Main {
         if("hbase".equals(type)){
             //load UID
             loadHBaseUID(date, allpids, 1);
+            //combie UID
+            uidCombine(date, allpids);
+            //combie Project
+            projectCombine(date, projects);
         }else if("trans".equals(type)){
             //combie UID
             uidCombine(date, allpids);
