@@ -55,8 +55,8 @@ public class ScanHBaseUID {
 
         Map<Long,String> result = shu.executeSqlTrue(pid,allUid);
 
-        for(String s : result.values()){
-            System.out.println(s);
+        for(Map.Entry<Long,String> s : result.entrySet()){
+            System.out.println(s.getKey() + " " + s.getValue());
         }
         System.out.println("All count : "  + all);
         System.out.println("Uniq count : " + allUid.size());
