@@ -50,6 +50,10 @@ public class ScanHBaseUID {
                 e.printStackTrace();
             }
         }
+        service.shutdownNow();
+
+        System.out.println("All count : "  + all);
+        System.out.println("Uniq count : " + allUid.size());
 
         ScanHBaseUID shu = new ScanHBaseUID();
 
@@ -58,9 +62,8 @@ public class ScanHBaseUID {
         for(Map.Entry<Long,String> s : result.entrySet()){
             System.out.println(s.getKey() + " " + s.getValue());
         }
-        System.out.println("All count : "  + all);
-        System.out.println("Uniq count : " + allUid.size());
-        service.shutdownNow();
+
+
 
     }
 
