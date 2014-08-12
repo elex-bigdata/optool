@@ -28,6 +28,8 @@ public class RegistUserReducer extends Reducer<Text,Text,Text,Text> {
             }
         }
 
-        context.write(new Text(orguid),new Text(registTime));
+        if(registTime.trim().length() > 0 && orguid.trim().length() > 0){
+            context.write(new Text(orguid),new Text(registTime));
+        }
     }
 }
