@@ -34,5 +34,9 @@ public class RegistUserCombineReducer extends Reducer<Text,Text,Text,NullWritabl
             context.getCounter("regist","user").increment(1);
         }
 
+        if(max.startsWith("201408")){
+            context.getCounter("regist",max.substring(0,8)).increment(1);
+        }
+
     }
 }
