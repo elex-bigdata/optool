@@ -22,9 +22,13 @@ public class RegistUserMapper extends Mapper<Text,Text,Text,Text>{
             context.write(key,new Text(Constants.node_prefix +value.toString()));
         }else{
             //将MYSQL的uid做MD5转换 与HBASE的UID 格式一致
-            long innerUID = Long.parseLong(key.toString());
-            long samplingUid = UidMappingUtil.getInstance().decorateWithMD5(innerUID);
-            context.write(new Text(String.valueOf(samplingUid)),new Text(Constants.idmap_prefix+ value.toString()));
+            try{
+                long innerUID = Long.parseLong(key.toString());
+                long samplingUid = UidMappingUtil.getInstance().decorateWithMD5(innerUID);
+                context.write(new Text(String.valueOf(samplingUid)),new Text(Constants.idmap_prefix+ value.toString()));
+            }catch(Exception e){
+
+            }
         }
     }
 }
