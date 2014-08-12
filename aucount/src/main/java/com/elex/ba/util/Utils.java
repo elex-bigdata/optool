@@ -134,7 +134,7 @@ public class Utils {
     }
 
     public static String getRegistPath(String date,String project){
-        return "/user/hadoop/offline/regist/"+date+"/" +  project;
+        return "/user/hadoop/offline/regist/" +  project;
     }
 
     public static void main(String[] args) throws ParseException {
