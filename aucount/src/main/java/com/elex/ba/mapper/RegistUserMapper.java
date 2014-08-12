@@ -27,7 +27,8 @@ public class RegistUserMapper extends Mapper<Text,Text,Text,Text>{
                 long samplingUid = UidMappingUtil.getInstance().decorateWithMD5(innerUID);
                 context.write(new Text(String.valueOf(samplingUid)),new Text(Constants.idmap_prefix+ value.toString()));
             }catch(Exception e){
-
+                System.out.println(fileName + " " + key.toString());
+                e.printStackTrace();
             }
         }
     }
