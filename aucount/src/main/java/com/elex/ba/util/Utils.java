@@ -114,7 +114,7 @@ public class Utils {
     }
 
     public static String getMysqlAttrPath(String node,String pid,String attr){
-        return "user/hadoop/mysql/"+pid+"/"+node+"_"+attr+".log";
+        return "/user/hadoop/mysql/"+pid+"/"+node+"_"+attr+".log";
     }
 
     public static String getHBaseUIDPath(String date,String node,String pid){
