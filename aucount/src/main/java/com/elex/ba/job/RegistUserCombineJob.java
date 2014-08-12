@@ -62,7 +62,7 @@ public class RegistUserCombineJob implements Callable<Integer> {
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(NullWritable.class);
+        job.setOutputValueClass(Text.class);
         job.setNumReduceTasks(6);
 
 

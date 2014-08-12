@@ -13,7 +13,7 @@ import java.io.IOException;
  * Date: 14-6-6
  * Time: 下午6:51
  */
-public class RegistUserCombineReducer extends Reducer<Text,Text,Text,NullWritable> {
+public class RegistUserCombineReducer extends Reducer<Text,Text,Text,Text> {
 
     private String date;
     private static String max = "99999900000000";
@@ -36,7 +36,7 @@ public class RegistUserCombineReducer extends Reducer<Text,Text,Text,NullWritabl
             min = min.compareTo(c.toString()) > 0 ? c.toString() : min;
         }
         if(installer && min.startsWith(date)){
-            context.write(key, NullWritable.get());
+//            context.write(key, NullWritable.get());
             context.getCounter("regist","user").increment(1);
         }
 
@@ -48,7 +48,8 @@ public class RegistUserCombineReducer extends Reducer<Text,Text,Text,NullWritabl
             if(max.equals(min)){
                 context.getCounter("regist","miss").increment(1);
             }else{
-                context.getCounter("regist",min.substring(0,8)).increment(1);
+                context.getCounter("regist","old").increment(1);
+                context.write(key,new Text(min.substring(0,8)));
             }
         }
 
