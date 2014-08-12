@@ -54,7 +54,7 @@ public class RegistUserCombineJob implements Callable<Integer> {
         conf.setClass("mapred.map.output.compression.codec", Lz4Codec.class, CompressionCodec.class);
         conf.set("regist.date",date);
 
-        Job job = new Job(conf,"RegistUserCombine_" + project);
+        Job job = new Job(conf,"RegistUserCombine_" +date+ project);
         job.setJarByClass(RegistUserCombineJob.class);
         job.setMapperClass(ProjectCombineMapper.class);
         job.setReducerClass(RegistUserCombineReducer.class);
