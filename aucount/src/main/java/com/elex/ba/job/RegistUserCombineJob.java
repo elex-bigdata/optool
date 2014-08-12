@@ -82,12 +82,15 @@ public class RegistUserCombineJob implements Callable<Integer> {
             }
         }
 
+        Path p = new Path("/usr/hadoop/liqiang/all_uid.log");
+        FileInputFormat.addInputPath(job,p);
+
         job.waitForCompletion(true);
 
         if (job.isSuccessful()) {
-            for(Path p : inputPaths){
+/*            for(Path p : inputPaths){
 //                fs.delete(p, true);
-            }
+            }*/
             return 0;
         } else {
             return -1;
