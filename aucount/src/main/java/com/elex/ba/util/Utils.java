@@ -133,10 +133,13 @@ public class Utils {
         return "/user/hadoop/offline/"+date+"/count" + range + "/" +  project;
     }
 
-    public static String getRegistPath(String date,String project){
+    public static String getRegistPath(String project){
         return "/user/hadoop/offline/regist/" +  project;
     }
 
+    public static String getRegistCombinePath(String date,String project){
+        return "/user/hadoop/offline/regist/" + date + "/" +  project;
+    }
     public static void main(String[] args) throws ParseException {
        /* String[]  week = getDateRange("20140711",7);
         System.out.println(week[0] + " " + week[1]);
