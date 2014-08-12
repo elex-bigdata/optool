@@ -1,11 +1,13 @@
 package com.elex.ba.job;
 
-import com.elex.ba.mapper.RegistUserMapper;
-import com.elex.ba.reducer.RegistUserReducer;
+import com.elex.ba.mapper.ProjectCombineMapper;
+import com.elex.ba.reducer.ProjectCombineReducer;
+import com.elex.ba.reducer.RegistUserCombineReducer;
 import com.elex.ba.util.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
@@ -13,28 +15,36 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
-import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
  * Author: liqiang
- * Date: 14-8-12
- * Time: 上午10:57
+ * 合并internet大项目下的所有小项目UID
+ * Date: 14-6-7
+ * Time: 上午10:35
  */
-public class RegistUserJob implements Callable<Integer> {
+public class RegistUserCombineJob implements Callable<Integer> {
 
+    private String project ; //internet大分类
+    private Set<String> pids; //小项目名
     private String date;
-    private String project ;
 
-    public RegistUserJob(String date, String project){
+    public RegistUserCombineJob(String date, String project, Set<String> pids){
         this.date = date;
         this.project = project;
+        this.pids = pids;
     }
 
-    public int run() throws IOException, ClassNotFoundException, InterruptedException, ParseException {
-        Path outputpath = new Path(Utils.getRegistPath(project));
+    public int run() throws IOException, ClassNotFoundException, InterruptedException {
+        Path outputpath = new Path(Utils.getRegistCombinePath(date, project));
+
 
         Configuration conf = new Configuration();
         conf.set("mapred.child.java.opts", "-Xmx1024m");
@@ -42,38 +52,42 @@ public class RegistUserJob implements Callable<Integer> {
         conf.set("mapred.reduce.child.java.opts","-Xmx1024m") ;
         conf.setBoolean("mapred.compress.map.output", true);
         conf.setClass("mapred.map.output.compression.codec", Lz4Codec.class, CompressionCodec.class);
+        conf.set("regist.date",date);
 
-        Job job = new Job(conf,"regist_" +date + "_" + project);
-        job.setJarByClass(RegistUserJob.class);
-        job.setMapperClass(RegistUserMapper.class);
-        job.setReducerClass(RegistUserReducer.class);
+        Job job = new Job(conf,"RegistUserCombine_" + project);
+        job.setJarByClass(RegistUserCombineJob.class);
+        job.setMapperClass(ProjectCombineMapper.class);
+        job.setReducerClass(RegistUserCombineReducer.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);
+        job.setOutputValueClass(NullWritable.class);
         job.setNumReduceTasks(5);
+
 
         FileSystem fs = FileSystem.get(conf);
         if (fs.exists(outputpath)) {
             fs.delete(outputpath, true);
         }
-
         FileOutputFormat.setOutputPath(job, outputpath);
 
-        //user/hadoop/mysql/22apple/node3_register_time.log
-        for(int i=0;i<16;i++){
-            Path p = new Path(Utils.getMysqlAttrPath("node" + i,project,"register_time") );
+        FileOutputFormat.setOutputPath(job,outputpath);
+        List<Path> inputPaths = new ArrayList<Path>();
+        for(String pid : pids){
+            Path p = new Path(Utils.getRegistPath(pid));
             if(fs.exists(p)){
-                FileInputFormat.addInputPath(job, p);
+                FileInputFormat.addInputPath(job,p);
+                inputPaths.add(p);
             }
-        } 
-        Path p = new Path("/user/hadoop/mysqlidmap/vf_"+project);
-        FileInputFormat.addInputPath(job, p);
+        }
 
         job.waitForCompletion(true);
 
         if (job.isSuccessful()) {
+            for(Path p : inputPaths){
+//                fs.delete(p, true);
+            }
             return 0;
         } else {
             return -1;

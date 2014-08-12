@@ -90,6 +90,8 @@ public class Main {
             }
         }else if("registuid".equals(type)){
             transRegistUID(date, allpids);
+        }else if("registcombine".equals(type)){
+            registUserCombine(date, projects);
         }
 
         System.out.println("End analyze , spend " + (System.currentTimeMillis() - begin) );
@@ -179,6 +181,24 @@ public class Main {
 
         service.shutdown();
         System.out.println("projectCombine finished");
+    }
+
+    public static void registUserCombine(String date, Map<String,Set<String>> projects) throws ParseException {
+        ExecutorService service = new ThreadPoolExecutor(20,20,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+        List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
+        for(String p : projects.keySet()){
+            tasks.add(service.submit(new RegistUserCombineJob(date, p, projects.get(p))));
+        }
+        for(Future f : tasks){
+            try {
+                f.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        service.shutdown();
+        System.out.println("registUserCombine finished");
     }
 
     public static void projectCount(String date, Set<String> projects, int range){
