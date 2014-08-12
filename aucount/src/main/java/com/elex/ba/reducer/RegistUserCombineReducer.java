@@ -45,7 +45,7 @@ public class RegistUserCombineReducer extends Reducer<Text,Text,Text,NullWritabl
         }*/
 
         if(installer){
-            if(!max.equals(min)){
+            if(max.equals(min)){
                 context.getCounter("regist","miss").increment(1);
             }else{
                 context.getCounter("regist",min.substring(0,8)).increment(1);
