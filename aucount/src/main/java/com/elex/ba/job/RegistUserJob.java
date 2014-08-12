@@ -52,6 +52,7 @@ public class RegistUserJob implements Callable<Integer> {
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
+        job.setNumReduceTasks(5);
 
         FileSystem fs = FileSystem.get(conf);
         if (fs.exists(outputpath)) {
