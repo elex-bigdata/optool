@@ -11,6 +11,7 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class RegistUserJob implements Callable<Integer> {
         job.setJarByClass(RegistUserJob.class);
         job.setMapperClass(RegistUserMapper.class);
         job.setReducerClass(RegistUserReducer.class);
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
