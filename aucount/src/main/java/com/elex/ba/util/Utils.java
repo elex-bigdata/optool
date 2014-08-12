@@ -113,6 +113,10 @@ public class Utils {
         return "/user/hadoop/offline/node/" + node + "/" + pid;
     }
 
+    public static String getMysqlAttrPath(String node,String pid,String attr){
+        return "user/hadoop/mysql/"+pid+"/"+node+"_"+attr+".log";
+    }
+
     public static String getHBaseUIDPath(String date,String node,String pid){
         return "/user/hadoop/offline/node/" + node + "/" + pid + "/" + date + "-r-0000";
     }
@@ -127,6 +131,10 @@ public class Utils {
 
     public static String getProjectCountPath(String date,String project, int range){
         return "/user/hadoop/offline/"+date+"/count" + range + "/" +  project;
+    }
+
+    public static String getRegistPath(String date,String project){
+        return "/user/hadoop/offline/regist/"+date+"/" +  project;
     }
 
     public static void main(String[] args) throws ParseException {

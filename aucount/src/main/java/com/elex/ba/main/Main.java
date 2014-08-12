@@ -1,9 +1,6 @@
 package com.elex.ba.main;
 
-import com.elex.ba.job.LoadHBaseUIDJob;
-import com.elex.ba.job.ProjectCombineJob;
-import com.elex.ba.job.ProjectCountJob;
-import com.elex.ba.job.UIDCombineJob;
+import com.elex.ba.job.*;
 import com.elex.ba.util.Utils;
 import com.google.gson.Gson;
 
@@ -91,6 +88,8 @@ public class Main {
                 uidCombine(date, allpids);
                 projectCombine(date, projects);
             }
+        }else if("registuid".equals(type)){
+            transRegistUID(date, allpids);
         }
 
         System.out.println("End analyze , spend " + (System.currentTimeMillis() - begin) );
@@ -128,6 +127,26 @@ public class Main {
                 tasks.add(service.submit(new UIDCombineJob(date,project)));
             }
 //        }
+
+        for(Future f : tasks){
+            try {
+                f.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        service.shutdown();
+        System.out.println("uidCombine finished");
+    }
+
+    public static void transRegistUID(String date, Set<String> projects) throws ParseException {
+        ExecutorService service = new ThreadPoolExecutor(25,40,60, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+        List<Future<Integer>> tasks = new ArrayList<Future<Integer>>();
+
+        for(String project : projects){
+            tasks.add(service.submit(new RegistUserJob(date,project)));
+        }
 
         for(Future f : tasks){
             try {

@@ -7,4 +7,6 @@ package com.elex.ba.util;
  */
 public class Constants {
     public static String mau_month_prefix = "MAU__";
+    public static String node_prefix = "node_";
+    public static String idmap_prefix = "idmap_";
 }
