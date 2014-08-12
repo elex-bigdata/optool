@@ -21,7 +21,7 @@ public class RegistUserMapper extends Mapper<Text,Text,Text,Text>{
         if(fileName.endsWith("register_time.log")){
             context.write(key,new Text(Constants.node_prefix +value.toString()));
         }else{
-            //将MYSQL的uid做MD5转换 与HBASE的UID 格式一致
+            //将MYSQL的uid做MD5转换 与MYSQL的UID 格式一致
             try{
                 long innerUID = Long.parseLong(key.toString());
                 long samplingUid = UidMappingUtil.getInstance().decorateWithMD5(innerUID);
@@ -29,6 +29,7 @@ public class RegistUserMapper extends Mapper<Text,Text,Text,Text>{
             }catch(Exception e){
                 System.out.println(fileName + " " + key.toString());
                 e.printStackTrace();
+                context.getCounter("regist","error").increment(1);
             }
         }
     }
