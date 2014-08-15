@@ -97,9 +97,14 @@ public class ScanHBaseUID {
             pstmt.setFetchSize(500000);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                idmap.put(rs.getLong(1), rs.getString(2));
+                try{
+                    idmap.put(rs.getLong(1), rs.getString(2));
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
-        } finally {
+
+        } finally{
             conn.close();
             pstmt.close();
             rs.close();
