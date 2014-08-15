@@ -94,6 +94,7 @@ public class ScanHBaseUID {
                 pstmt.setLong(i,uid);
                 i++;
             }
+            pstmt.setFetchSize(500000);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 idmap.put(rs.getLong(1), rs.getString(2));
@@ -112,7 +113,6 @@ public class ScanHBaseUID {
         Collection<String> initSql = new ArrayList<String>(1);
         initSql.add("select 1;");
         ds.setConnectionInitSqls(initSql);
-
         ds.setDriverClassName("com.mysql.jdbc.Driver");
         ds.setUsername("xingyun");
         ds.setPassword("xa");
