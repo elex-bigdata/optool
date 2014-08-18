@@ -57,14 +57,13 @@ public class ADSearchService {
             List<String> debugLines = new ArrayList<String>();
             for (Result r : rs) {
 
-//                KeyValue kv = r.getColumnLatest(cf,t);
-                int cat = Bytes.toInt(r.getColumnLatest(cf,c).getValue());
-                //1.100
-                String typeValue = Bytes.toString(r.getColumnLatest(cf,t).getValue());
-                if(typeValue.length() == 0){
+                KeyValue kv = r.getColumnLatest(cf,t);
+                if(kv == null){
                     continue;
                 }
-                String tStr = typeValue.split("\\.")[0];
+                int cat = Bytes.toInt(r.getColumnLatest(cf,c).getValue());
+                //1.100
+                String tStr = Bytes.toString(r.getColumnLatest(cf,t).getValue()).split("\\.")[0];
                 if(debug){
                     String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
                     debugLines.add(uid + " " + Constant.dfmt.format(new Date(r.getColumnLatest(cf,c).getTimestamp())) + " " + tStr + "," + cat);
