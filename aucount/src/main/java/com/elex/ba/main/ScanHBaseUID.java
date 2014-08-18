@@ -37,16 +37,10 @@ public class ScanHBaseUID {
             tasks.add(service.submit(new ScanUID("node" + i,pid,startKey,endKey)));
         }
 
-        Set<Long> allUid = new HashSet<Long>();
-
-        int all = 0;
-
         Map<Long,Long> allUidSampleUid = new HashMap<Long, Long>();
         for(Future<Map<Long,Long>> uids : tasks){
             try{
                 Map<Long,Long> rs = uids.get();
-                all += rs.size();
-                allUid.addAll(rs.keySet());
                 allUidSampleUid.putAll(rs);
             }catch(Exception e){
                 e.printStackTrace();
@@ -54,12 +48,11 @@ public class ScanHBaseUID {
         }
         service.shutdownNow();
 
-        System.out.println("All count : "  + all);
-        System.out.println("Uniq count : " + allUid.size());
+        System.out.println("All count : "  + allUidSampleUid.size());
 
         ScanHBaseUID shu = new ScanHBaseUID();
 
-        Map<Long,String> result = shu.executeSqlTrue(pid,allUid);
+        Map<Long,String> result = shu.executeSqlTrue(pid,allUidSampleUid.keySet());
 
         for(Map.Entry<Long,String> s : result.entrySet()){
             System.out.println(s.getKey() + " " + s.getValue() + " " + allUidSampleUid.get(s.getKey()));
