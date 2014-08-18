@@ -58,6 +58,12 @@ public class ScanHBaseUID {
             System.out.println(s.getKey() + " " + s.getValue() + " " + allUidSampleUid.get(s.getKey()));
         }
 
+        if(result == null || result.size() == 0){
+            for(Map.Entry<Long,Long> s : allUidSampleUid.entrySet()){
+                System.out.println(s.getKey() + " " + s.getValue());
+            }
+        }
+
 
 
     }
