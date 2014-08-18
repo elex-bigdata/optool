@@ -74,7 +74,7 @@ public class ADSearchService {
 
                 }else{*/
                 //1.100
-                String tStr = Bytes.toString(r.getColumnLatest(cf,t).getValue()).split(".")[0];
+                String tStr = Bytes.toString(r.getColumnLatest(cf,t).getValue()).split("\\.")[0];
                 if(debug){
                     String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
                     debugLines.add(uid + " " + Constant.dfmt.format(new Date(r.getColumnLatest(cf,a).getTimestamp())) + " " + tStr + "," + cat);
