@@ -59,22 +59,12 @@ public class ADSearchService {
 
 //                KeyValue kv = r.getColumnLatest(cf,t);
                 int cat = Bytes.toInt(r.getColumnLatest(cf,c).getValue());
-                /*if(kv == null){
-                    int game = Bytes.toInt(r.getColumnLatest(cf,a).getValue());
-                    int shop = Bytes.toInt(r.getColumnLatest(cf,b).getValue());
-                    int social = Bytes.toInt(r.getColumnLatest(cf,d).getValue());
-
-                    String max = game > shop ?  (game > social ? "a" : "d") : (shop > social ? "b" : "d") ;
-
-                    if(catMap.get(max) == cat){
-                        hit ++;
-                    }else{
-                        miss++;
-                    }
-
-                }else{*/
                 //1.100
-                String tStr = Bytes.toString(r.getColumnLatest(cf,t).getValue()).split("\\.")[0];
+                String typeValue = Bytes.toString(r.getColumnLatest(cf,t).getValue());
+                if(typeValue.length() == 0){
+                    continue;
+                }
+                String tStr = typeValue.split("\\.")[0];
                 if(debug){
                     String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
                     debugLines.add(uid + " " + Constant.dfmt.format(new Date(r.getColumnLatest(cf,c).getTimestamp())) + " " + tStr + "," + cat);
