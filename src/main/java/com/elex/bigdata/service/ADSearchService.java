@@ -48,6 +48,7 @@ public class ADSearchService {
             scan.setCaching(1000);
             scan.setTimeRange(startTime,endTime);
             scan.addColumn(cf,t);
+            scan.addColumn(cf,c);
 
             ResultScanner rs = hTable.getScanner(scan);
             int hit = 0;
