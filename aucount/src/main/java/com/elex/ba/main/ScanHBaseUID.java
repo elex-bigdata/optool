@@ -75,7 +75,6 @@ public class ScanHBaseUID {
         if (uids.size() == 0) {
             return new HashMap<Long, String>();
         }
-        System.out.println(projectId + " " + uids.size());
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -169,18 +168,17 @@ class ScanUID implements Callable<List<String[]>>{
                 long uid = Utils.transformerUID(Bytes.tail(r.getRow(), 5));
                 results.put(Utils.truncate(uid), uid);
             }
-            Map<Long,String> orgUids = query.executeSqlTrue(tableName,results.keySet());
-            for(Map.Entry<Long,String> s : orgUids.entrySet()){
-                String[] uidMap = new String[3];
-                uidMap[0] = String.valueOf(s.getKey());
-                uidMap[1] = s.getValue();
-                uidMap[2] = String.valueOf(results.get(s.getKey()));
-                uids.add(uidMap);
-            }
-
         }finally {
             scanner.close();
             table.close();
+        }
+        Map<Long,String> orgUids = query.executeSqlTrue(tableName,results.keySet());
+        for(Map.Entry<Long,String> s : orgUids.entrySet()){
+            String[] uidMap = new String[3];
+            uidMap[0] = String.valueOf(s.getKey());
+            uidMap[1] = s.getValue();
+            uidMap[2] = String.valueOf(results.get(s.getKey()));
+            uids.add(uidMap);
         }
         return uids;
     }
