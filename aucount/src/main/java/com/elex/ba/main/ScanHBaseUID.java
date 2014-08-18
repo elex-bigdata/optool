@@ -31,17 +31,18 @@ public class ScanHBaseUID {
         String endKey = args[2];
 
         ExecutorService service = Executors.newFixedThreadPool(16);
-        List<Future<Map<Long,Long>>> tasks = new ArrayList<Future<Map<Long,Long>>>();
+        List<Future<List<String[]>>> tasks = new ArrayList<Future<List<String[]>>>();
 
+        ScanHBaseUID shu = new ScanHBaseUID();
         for(int i=0;i<16;i++){
-            tasks.add(service.submit(new ScanUID("node" + i,pid,startKey,endKey)));
+            tasks.add(service.submit(new ScanUID("node" + i,pid,startKey,endKey,shu)));
         }
 
-        Map<Long,Long> allUidSampleUid = new HashMap<Long, Long>();
-        for(Future<Map<Long,Long>> uids : tasks){
+        List<String[]> allUidSampleUid = new ArrayList<String[]>();
+        for(Future<List<String[]>> uids : tasks){
             try{
-                Map<Long,Long> rs = uids.get();
-                allUidSampleUid.putAll(rs);
+                List<String[]> rs = uids.get();
+                allUidSampleUid.addAll(rs);
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -50,9 +51,9 @@ public class ScanHBaseUID {
 
         System.out.println("All count : "  + allUidSampleUid.size());
 
-        ScanHBaseUID shu = new ScanHBaseUID();
 
-        Map<Long,String> result = shu.executeSqlTrue(pid,allUidSampleUid.keySet());
+
+/*        Map<Long,String> result = shu.executeSqlTrue(pid,allUidSampleUid.keySet());
 
         for(Map.Entry<Long,String> s : result.entrySet()){
             System.out.println(s.getKey() + " " + s.getValue() + " " + allUidSampleUid.get(s.getKey()));
@@ -62,9 +63,11 @@ public class ScanHBaseUID {
             for(Map.Entry<Long,Long> s : allUidSampleUid.entrySet()){
                 System.out.println(s.getKey() + " " + s.getValue());
             }
+        }*/
+
+        for(String[] s : allUidSampleUid){
+            System.out.println(s[0] + " " + s[1] + " " + s[2]);
         }
-
-
 
     }
 
@@ -128,22 +131,24 @@ public class ScanHBaseUID {
 
 }
 
-class ScanUID implements Callable<Map<Long,Long>>{
+class ScanUID implements Callable<List<String[]>>{
 
     String node;
     String tableName;
     String startKey;
     String endKey;
+    ScanHBaseUID query;
 
-    public ScanUID(String node,String tableName,String startKey,String endKey){
+    public ScanUID(String node,String tableName,String startKey,String endKey,ScanHBaseUID query){
         this.node = node;
         this.tableName = tableName;
         this.startKey = startKey;
         this.endKey = endKey;
+        this.query = query;
     }
 
     @Override
-    public Map<Long,Long> call() throws Exception {
+    public List<String[]> call() throws Exception {
         Configuration conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum", node);
         conf.set("hbase.zookeeper.property.clientPort", "3181");
@@ -158,16 +163,26 @@ class ScanUID implements Callable<Map<Long,Long>>{
         HTable table = new HTable(conf,"deu_" + tableName);
         ResultScanner scanner = table.getScanner(scan);
         Map<Long,Long> results = new HashMap<Long,Long>();
+        List<String[]> uids = new ArrayList<String[]>();
         try{
             for(Result r : scanner){
                 long uid = Utils.transformerUID(Bytes.tail(r.getRow(), 5));
                 results.put(Utils.truncate(uid), uid);
             }
+            Map<Long,String> orgUids = query.executeSqlTrue(tableName,results.keySet());
+            for(Map.Entry<Long,String> s : orgUids.entrySet()){
+                String[] uidMap = new String[3];
+                uidMap[0] = String.valueOf(s.getKey());
+                uidMap[1] = s.getValue();
+                uidMap[2] = String.valueOf(results.get(s.getKey()));
+                uids.add(uidMap);
+            }
+
         }finally {
             scanner.close();
             table.close();
         }
-        return results;
+        return uids;
     }
 }
 
