@@ -66,6 +66,7 @@ public class ScanHBaseUID {
         if (uids.size() == 0) {
             return null;
         }
+        System.out.println(projectId + " " + uids.size());
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
