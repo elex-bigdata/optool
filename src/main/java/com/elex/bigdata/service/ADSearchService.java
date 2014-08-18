@@ -47,18 +47,18 @@ public class ADSearchService {
             scan.setStopRow(startStopRow[1]);
             scan.setCaching(1000);
             scan.setTimeRange(startTime,endTime);
+            scan.addColumn(cf,t);
 
             ResultScanner rs = hTable.getScanner(scan);
             int hit = 0;
             int miss = 0;
-            int ab = 0;
             //0，未指定 1，游戏 2，电商 99，其他
             List<String> debugLines = new ArrayList<String>();
             for (Result r : rs) {
 
-                KeyValue kv = r.getColumnLatest(cf,t);
+//                KeyValue kv = r.getColumnLatest(cf,t);
                 int cat = Bytes.toInt(r.getColumnLatest(cf,c).getValue());
-                if(kv == null){
+                /*if(kv == null){
                     int game = Bytes.toInt(r.getColumnLatest(cf,a).getValue());
                     int shop = Bytes.toInt(r.getColumnLatest(cf,b).getValue());
                     int social = Bytes.toInt(r.getColumnLatest(cf,d).getValue());
@@ -70,26 +70,25 @@ public class ADSearchService {
                     }else{
                         miss++;
                     }
-                    if(debug){
-                        String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
-                        debugLines.add(uid + " " + Constant.dfmt.format(new Date(r.getColumnLatest(cf,a).getTimestamp())) + " " + catMap.get(max) + "," + cat);
-                    }
-                }else{
-                    //b.19,a.21,z.60 a.游戏 b.电商 d. z.未知
-                    String tStr = Bytes.toString(r.getColumnLatest(cf,t).getValue());
-                    if(("a".equals(tStr) && cat ==1) || ("b".equals(tStr) && cat == 2)){
-                        hit ++;
-                    }else if("z".equals(tStr)){
-                        ab ++;
-                    }else{
-                        miss ++;
-                    }
+
+                }else{*/
+                //1.100
+                String tStr = Bytes.toString(r.getColumnLatest(cf,t).getValue()).split(".")[0];
+                if(debug){
+                    String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
+                    debugLines.add(uid + " " + Constant.dfmt.format(new Date(r.getColumnLatest(cf,a).getTimestamp())) + " " + tStr + "," + cat);
                 }
+                if(tStr.equals(String.valueOf(cat))){
+                    hit ++;
+                }else{
+                    miss ++;
+                }
+//                }
 
 
             }
             Map result = new HashMap();
-            result.put("count","ab:" + ab + ", hit:" + hit + ", miss:" + miss );
+            result.put("count"," hit:" + hit + ", miss:" + miss );
             result.put("hit",debugLines);
 
             return result;
@@ -106,7 +105,7 @@ public class ADSearchService {
         HTableInterface hTable = null;
         byte[] fm = Bytes.toBytes("basis");
         byte[] qf = Bytes.toBytes("c");
-        byte[] aid = Bytes.toBytes("aid");
+        byte[] aidCol = Bytes.toBytes("aid");
         byte[] widthCol = Bytes.toBytes("w");
         byte[] heightCol = Bytes.toBytes("h");
         try{
@@ -134,7 +133,7 @@ public class ADSearchService {
                     String uid = Bytes.toString(Bytes.tail(r.getRow(), r.getRow().length - 11));
                     long time = r.getColumnLatest(fm,qf).getTimestamp();
 //                    long time = Bytes.toLong(Bytes.head(Bytes.tail(r.getRow(),r.getRow().length-3),8));
-                    String gid = Bytes.toString(r.getColumnLatest(fm, aid).getValue());
+                    String aid = Bytes.toString(r.getColumnLatest(fm, aidCol).getValue());
 
                     String detail = "{";
                     if(r.getColumnLatest(fm, widthCol) != null){
@@ -146,7 +145,8 @@ public class ADSearchService {
                     }
                     detail += "}";
 
-                    debugLines.add(uid + " " + Constant.dfmt.format(new Date(time)) + " " + Bytes.toString(r.getColumnLatest(fm,qf).getValue()) + " " + gid + ":" + detail);
+                    debugLines.add(uid + " " + Constant.dfmt.format(new Date(time)) + " " + Bytes.toString(r.getColumnLatest(fm,qf).getValue())
+                            + " " + aid + ":" + detail);
                 }
 
                 count ++;
