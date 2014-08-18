@@ -70,7 +70,7 @@ public class ScanHBaseUID {
 
     public Map<Long, String> executeSqlTrue(String projectId, Set<Long> uids) throws SQLException {
         if (uids.size() == 0) {
-            return null;
+            return new HashMap<Long, String>();
         }
         System.out.println(projectId + " " + uids.size());
         Connection conn = null;
@@ -104,7 +104,9 @@ public class ScanHBaseUID {
                 }
             }
 
-        } finally{
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
             conn.close();
             pstmt.close();
             rs.close();
