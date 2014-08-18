@@ -10,7 +10,6 @@ import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.*;
@@ -30,10 +29,7 @@ public class ADSearchService {
             hTable = HBaseUtil.getHTable(tableName);
             Scan scan = new Scan();
             byte[] cf = Bytes.toBytes("h");
-            byte[] a = Bytes.toBytes("a");
-            byte[] b = Bytes.toBytes("b");
             byte[] c = Bytes.toBytes("c");
-            byte[] d = Bytes.toBytes("d");
             byte[] t = Bytes.toBytes("t");
 
             Map<String,Integer> catMap = new HashMap<String,Integer>();
@@ -73,8 +69,6 @@ public class ADSearchService {
                 }else{
                     miss ++;
                 }
-//                }
-
 
             }
             Map result = new HashMap();
