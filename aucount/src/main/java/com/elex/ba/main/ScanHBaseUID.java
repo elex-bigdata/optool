@@ -67,7 +67,7 @@ public class ScanHBaseUID {
         }*/
 
         for(String[] s : allUidSampleUid){
-            System.out.println(s[0] + " " + s[1] + " " + s[2] + " " + s[3]);
+            System.out.println(s[0] + "\t" + s[1] + "\t" + s[2] + "\t" + s[3]);
         }
 
     }
