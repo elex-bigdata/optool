@@ -1,6 +1,7 @@
 package com.elex.ba.main;
 
 import com.elex.ba.util.Utils;
+import com.xingcloud.xa.uidmapping.UidMappingUtil;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -66,7 +67,7 @@ public class ScanHBaseUID {
         }*/
 
         for(String[] s : allUidSampleUid){
-            System.out.println(s[0] + " " + s[1] + " " + s[2]);
+            System.out.println(s[0] + " " + s[1] + " " + s[2] + " " + s[4]);
         }
 
     }
@@ -161,12 +162,13 @@ class ScanUID implements Callable<List<String[]>>{
 
         HTable table = new HTable(conf,"deu_" + tableName);
         ResultScanner scanner = table.getScanner(scan);
-        Map<Long,Long> results = new HashMap<Long,Long>();
+        Map<Long,String> results = new HashMap<Long,String>();
         List<String[]> uids = new ArrayList<String[]>();
         try{
             for(Result r : scanner){
                 long uid = Utils.transformerUID(Bytes.tail(r.getRow(), 5));
-                results.put(Utils.truncate(uid), uid);
+                long ssUID = UidMappingUtil.getInstance().decorateWithMD5(uid);
+                results.put(Utils.truncate(uid), uid + "_" + ssUID);
             }
         }finally {
             scanner.close();
@@ -174,10 +176,12 @@ class ScanUID implements Callable<List<String[]>>{
         }
         Map<Long,String> orgUids = query.executeSqlTrue(tableName,results.keySet());
         for(Map.Entry<Long,String> s : orgUids.entrySet()){
-            String[] uidMap = new String[3];
+            String[] uidMap = new String[4];
             uidMap[0] = String.valueOf(s.getKey());
             uidMap[1] = s.getValue();
-            uidMap[2] = String.valueOf(results.get(s.getKey()));
+            String[] ids = results.get(s.getKey()).split("_");
+            uidMap[2] = ids[0];
+            uidMap[3] = ids[1];
             uids.add(uidMap);
         }
         return uids;
