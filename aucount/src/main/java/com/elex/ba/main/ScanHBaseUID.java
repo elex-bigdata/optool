@@ -167,8 +167,8 @@ class ScanUID implements Callable<List<String[]>>{
         try{
             for(Result r : scanner){
                 long uid = Utils.transformerUID(Bytes.tail(r.getRow(), 5));
-
-                results.put(Utils.truncate(uid), String.valueOf(uid));
+                long ssUID = UidMappingUtil.getInstance().decorateWithMD5(uid);
+                results.put(Utils.truncate(uid), uid + "_" + ssUID);
             }
         }finally {
             scanner.close();
@@ -179,9 +179,9 @@ class ScanUID implements Callable<List<String[]>>{
             String[] uidMap = new String[4];
             uidMap[0] = String.valueOf(s.getKey());
             uidMap[1] = s.getValue();
-            //String[] ids = results.get(s.getKey()).split("_");
-            uidMap[2] = results.get(s.getKey());
-            uidMap[3] = String.valueOf(UidMappingUtil.getInstance().decorateWithMD5(s.getKey()));
+            String[] ids = results.get(s.getKey()).split("_");
+            uidMap[2] = ids[0];
+            uidMap[3] = ids[1];
             uids.add(uidMap);
         }
         return uids;
