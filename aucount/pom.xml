@@ -39,7 +39,7 @@
 
                     <archive>
                         <manifest>
-                            <mainClass>com.elex.ba.main.ScanHBaseUID</mainClass>
+                            <mainClass>com.elex.ba.main.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
