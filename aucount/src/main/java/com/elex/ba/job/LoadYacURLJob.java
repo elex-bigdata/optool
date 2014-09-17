@@ -1,7 +1,5 @@
 package com.elex.ba.job;
 
-import com.elex.ba.mapper.LoadHBaseUIDMapper;
-import com.elex.ba.reducer.LoadHBaseUIDReducer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -17,12 +15,8 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.RecordWriter;
-import org.apache.hadoop.mapred.lib.MultipleOutputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -57,7 +51,7 @@ public class LoadYacURLJob {
         scan.setFilter(filterList);
 
         Configuration conf = HBaseConfiguration.create();
-        conf.set("hbase.zookeeper.quorum", "dmnode3,dmnode4,dmnode5");
+//        conf.set("hbase.zookeeper.quorum", "dmnode3,dmnode4,dmnode5");
 //        conf.set("hbase.zookeeper.property.clientPort", "3181");
         conf.set("mapred.child.java.opts", "-Xmx1024m");
         conf.set("mapred.map.child.java.opts","-Xmx512m") ;
