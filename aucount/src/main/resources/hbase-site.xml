@@ -36,4 +36,5 @@
         <name>hbase.client.retries.number</name>
         <value>12</value>
     </property>
+
 </configuration>
