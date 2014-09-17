@@ -22,7 +22,12 @@ public class Main {
     public static void  main(String[] args) throws Exception {
 
         System.out.println(args.length + " - " + args[0]);
-        if(args.length != 2){
+
+        if("yac".equals(args[0]) ){
+            new LoadYacURLJob().run();
+        }
+
+ /*       if(args.length != 2){
             System.err.println("Usage : date type");
             System.exit(-1);
         }
@@ -94,7 +99,7 @@ public class Main {
             registUserCombine(date, projects);
         }
 
-        System.out.println("End analyze , spend " + (System.currentTimeMillis() - begin) );
+        System.out.println("End analyze , spend " + (System.currentTimeMillis() - begin) );*/
 
     }
 
