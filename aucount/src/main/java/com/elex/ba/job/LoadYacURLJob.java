@@ -35,8 +35,8 @@ public class LoadYacURLJob {
         Path outputpath = new Path("/user/hadoop/yac/url");
         Scan scan = new Scan();
 
-        scan.setStartRow(Bytes.toBytes("1"));
-        scan.setStopRow(Bytes.toBytes("2"));
+        scan.setStartRow(new byte[]{((byte)1)});
+        scan.setStopRow(new byte[]{((byte)2)});
         scan.setMaxVersions(1); //只需要一个version
         scan.setCaching(10000);
 
