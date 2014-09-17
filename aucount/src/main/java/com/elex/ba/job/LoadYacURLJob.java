@@ -88,51 +88,52 @@ public class LoadYacURLJob {
         }
     }
 
-}
 
-class LoadYacNationURLMapper extends TableMapper<Text,NullWritable> {
+    public static class LoadYacNationURLMapper extends TableMapper<Text,NullWritable> {
 
-    byte[] family = Bytes.toBytes("ua");
-    byte[] urlCol = Bytes.toBytes("url");
-    byte[] nationCol = Bytes.toBytes("nt");
+        byte[] family = Bytes.toBytes("ua");
+        byte[] urlCol = Bytes.toBytes("url");
+        byte[] nationCol = Bytes.toBytes("nt");
 
-    @Override
-    protected void map(ImmutableBytesWritable key, Result value, Context context) throws IOException, InterruptedException {
-        try{
-            byte[] rowKey = key.get();
-            String uid = Bytes.toString(Bytes.tail(rowKey, rowKey.length - 9));
+        @Override
+        protected void map(ImmutableBytesWritable key, Result value, Context context) throws IOException, InterruptedException {
+            try{
+                byte[] rowKey = key.get();
+                String uid = Bytes.toString(Bytes.tail(rowKey, rowKey.length - 9));
 
-            String url = Bytes.toString(value.getColumn(family, urlCol).get(0).getValue());
-            String nation = Bytes.toString(value.getColumn(family, nationCol).get(0).getValue());
+                String url = Bytes.toString(value.getColumn(family, urlCol).get(0).getValue());
+                String nation = Bytes.toString(value.getColumn(family, nationCol).get(0).getValue());
 
-            context.write(new Text(nation + "\t" + uid + "\t" + url), NullWritable.get());
-        } catch (Exception e) {
+                context.write(new Text(nation + "\t" + uid + "\t" + url), NullWritable.get());
+            } catch (Exception e) {
 
-        }
+            }
 
-    }
-}
-
-class LoadYacNationReducer extends Reducer<Text,NullWritable,Text,Text> {
-
-    private MultipleOutputs<Text,Text> mos;
-
-    @Override
-    protected void setup(Context context)
-            throws IOException, InterruptedException {
-        mos=new MultipleOutputs(context);
-    }
-
-    @Override
-    protected void reduce(Text key, Iterable<NullWritable> values, Context context) throws IOException, InterruptedException {
-        String[] kv = key.toString().split("\t");
-        if(kv.length == 3){
-            mos.write(kv[0],new Text(kv[1]),new Text(kv[2]));
         }
     }
 
-    protected void cleanup(Context context) throws IOException,InterruptedException {
-        mos.close();
+    public static class LoadYacNationReducer extends Reducer<Text,NullWritable,Text,Text> {
+
+        private MultipleOutputs<Text,Text> mos;
+
+        @Override
+        protected void setup(Context context)
+                throws IOException, InterruptedException {
+            mos=new MultipleOutputs(context);
+        }
+
+        @Override
+        protected void reduce(Text key, Iterable<NullWritable> values, Context context) throws IOException, InterruptedException {
+            String[] kv = key.toString().split("\t");
+            if(kv.length == 3){
+                mos.write(kv[0],new Text(kv[1]),new Text(kv[2]));
+            }
+        }
+
+        protected void cleanup(Context context) throws IOException,InterruptedException {
+            mos.close();
+        }
+
     }
 
 }
