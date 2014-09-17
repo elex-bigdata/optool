@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property>
+        <name>hbase.cluster.distributed</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hbase.rootdir</name>
+        <value>hdfs://namenode1:8020/hbase</value>
+    </property>
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>dmnode3,dmnode4,dmnode5</value>
+    </property>
+    <property>
+        <name>hbase.regionserver.handler.count</name>
+        <value>100</value>
+    </property>
+    <property>
+        <name>hbase.hregion.max.filesize</name>
+        <value>4294967296</value>
+    </property>
+    <property>
+        <name>hbase.regionserver.lease.period</name>
+        <value>300000</value>
+    </property>
+    <property>
+        <name>hbase.rpc.timeout</name>
+        <value>300000</value>
+    </property>
+</configuration>
