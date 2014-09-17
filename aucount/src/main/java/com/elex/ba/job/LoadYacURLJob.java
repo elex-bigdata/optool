@@ -58,7 +58,7 @@ public class LoadYacURLJob {
 
         Configuration conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum", "dmnode3,dmnode4,dmnode5");
-        conf.set("hbase.zookeeper.property.clientPort", "3181");
+//        conf.set("hbase.zookeeper.property.clientPort", "3181");
         conf.set("mapred.child.java.opts", "-Xmx1024m");
         conf.set("mapred.map.child.java.opts","-Xmx512m") ;
         conf.set("mapred.reduce.child.java.opts", "-Xmx512m") ;
