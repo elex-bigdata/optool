@@ -172,7 +172,7 @@ class ScanUID implements Callable<List<String[]>>{
                 results.put(truncUid, uid + "");
 
                 if(count.get(truncUid) == null){
-                    count.put(truncUid,0);
+                    count.put(truncUid,1);
                 }else{
                     count.put(truncUid,count.get(truncUid)+1);
                 }
