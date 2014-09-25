@@ -39,7 +39,7 @@
 
                     <archive>
                         <manifest>
-                            <mainClass>com.elex.ba.main.Main</mainClass>
+                            <mainClass>com.elex.ba.main.ScanHBaseUID</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -72,18 +72,8 @@
 
         <dependency>
             <groupId>org.apache.hbase</groupId>
-            <artifactId>hbase</artifactId>
-            <version>0.94.6-cdh4.5.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>hbase-0.94.6.xingcloud.1.0</artifactId>
+            <version>0.94.6</version>
         </dependency>
 
         <dependency>
