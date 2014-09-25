@@ -190,6 +190,7 @@ class ScanUID implements Callable<List<String[]>>{
             uidMap[2] = results.get(s.getKey());
             uidMap[3] = String.valueOf(count.get(s.getKey()));
             uids.add(uidMap);
+
         }
         return uids;
     }
