@@ -163,12 +163,20 @@ class ScanUID implements Callable<List<String[]>>{
         HTable table = new HTable(conf,"deu_" + tableName);
         ResultScanner scanner = table.getScanner(scan);
         Map<Long,String> results = new HashMap<Long,String>();
+        Map<Long,Integer> count = new HashMap<Long,Integer>();
         List<String[]> uids = new ArrayList<String[]>();
         try{
             for(Result r : scanner){
                 long uid = Utils.transformerUID(Bytes.tail(r.getRow(), 5));
+                long truncUid = Utils.truncate(uid);
+                results.put(truncUid, uid + "");
 
-                results.put(Utils.truncate(uid), uid + "");
+                if(count.get(truncUid) == null){
+                    count.put(truncUid,0);
+                }else{
+                    count.put(truncUid,count.get(truncUid)+1);
+                }
+
             }
         }finally {
             scanner.close();
@@ -179,10 +187,8 @@ class ScanUID implements Callable<List<String[]>>{
             String[] uidMap = new String[4];
             uidMap[0] = String.valueOf(s.getKey());
             uidMap[1] = s.getValue();
-            String[] ids = results.get(s.getKey()).split("_");
-            uidMap[2] = ids[0];
-            long ssUID = UidMappingUtil.getInstance().decorateWithMD5(s.getKey());
-            uidMap[3] = String.valueOf(ssUID);
+            uidMap[2] = results.get(s.getKey());
+            uidMap[3] = String.valueOf(count.get(s.getKey()));
             uids.add(uidMap);
         }
         return uids;
