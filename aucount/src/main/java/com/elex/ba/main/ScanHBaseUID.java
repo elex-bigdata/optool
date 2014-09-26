@@ -166,9 +166,9 @@ class ScanUID implements Callable<List<String[]>>{
             scan.setMaxVersions();
         }else{
             scan.setMaxVersions(1);
+            scan.setFilter(new KeyOnlyFilter());
         }
         scan.setCaching(10000);
-        scan.setFilter(new KeyOnlyFilter());
 
         HTable table = new HTable(conf,"deu_" + tableName);
         ResultScanner scanner = table.getScanner(scan);
