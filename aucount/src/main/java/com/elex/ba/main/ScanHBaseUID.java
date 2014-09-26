@@ -24,19 +24,23 @@ import java.util.concurrent.*;
 public class ScanHBaseUID {
 
     private BasicDataSource ds;
+    private static boolean maxVersion = false;
 
     public static void main(String[] args) throws Exception{
 
         String pid = args[0];
         String startKey = args[1];
         String endKey = args[2];
+        if(args.length == 4 && "true".equals(args[3])){
+            maxVersion = true;
+        }
 
         ExecutorService service = Executors.newFixedThreadPool(16);
         List<Future<List<String[]>>> tasks = new ArrayList<Future<List<String[]>>>();
 
         ScanHBaseUID shu = new ScanHBaseUID();
         for(int i=0;i<16;i++){
-            tasks.add(service.submit(new ScanUID("node" + i,pid,startKey,endKey,shu)));
+            tasks.add(service.submit(new ScanUID("node" + i,pid,startKey,endKey,shu,true)));
         }
 
         List<String[]> allUidSampleUid = new ArrayList<String[]>();
@@ -138,13 +142,15 @@ class ScanUID implements Callable<List<String[]>>{
     String startKey;
     String endKey;
     ScanHBaseUID query;
+    boolean maxVersion = false;
 
-    public ScanUID(String node,String tableName,String startKey,String endKey,ScanHBaseUID query){
+    public ScanUID(String node,String tableName,String startKey,String endKey,ScanHBaseUID query,boolean maxVersion){
         this.node = node;
         this.tableName = tableName;
         this.startKey = startKey;
         this.endKey = endKey;
         this.query = query;
+        this.maxVersion = maxVersion;
     }
 
     @Override
@@ -156,7 +162,11 @@ class ScanUID implements Callable<List<String[]>>{
         Scan scan = new Scan();
         scan.setStartRow(Bytes.toBytes(startKey));
         scan.setStopRow(Bytes.toBytes(endKey));
-        scan.setMaxVersions(1); //只需要一个version
+        if(maxVersion){
+            scan.setMaxVersions();
+        }else{
+            scan.setMaxVersions(1);
+        }
         scan.setCaching(10000);
         scan.setFilter(new KeyOnlyFilter());
 
