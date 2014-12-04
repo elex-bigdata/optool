@@ -40,6 +40,10 @@
 
         var id = $("#ads").val();
 
+        if(!id){
+            return;
+        }
+
         $("#content").html("");
         $.ajax({
             type: 'POST',
