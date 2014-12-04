@@ -21,7 +21,10 @@
 
 
     function query(){
+        var id = $("#ads").val();
+        console.info("change " + id );
 
+        $('#ad').attr("src","ad?action=adtest&id="+id);
     }
 
     function loadAds(){
