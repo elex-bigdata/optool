@@ -30,7 +30,7 @@
                 for(var k in data){
                     $('#ads').append("<option value='"+ k +"'>" + data[k] +"</option>");
                 }
-                $('#ads').on('change', query());
+//                $('#ads').on('change', query());
             }
         });
     }
@@ -49,6 +49,8 @@
 
 <body>
     广告列表：<select type="text" id="ads" name="ads" style="width: 200px"></select>
+    <input type="button" value="查询" onclick="query()"/> <br/>
+    <br/>
     <br/>
     <br/>
 
