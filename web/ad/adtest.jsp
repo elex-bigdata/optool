@@ -44,7 +44,7 @@
             return;
         }
 
-        $('#ad').attr("src","ad?action=adtest&id="+id);
+        $('#ad').attr("src","ad?action=adtest&id="+id).reload();
 
 /*        $("#content").html("");
         $.ajax({
