@@ -21,17 +21,8 @@
 
 var indexdata2 =
 [
-    { isexpand: "false", text: "表格", children: [
-        { isexpand: "false", text: "可排序", children: [
-		    { url: "dotnetdemos/grid/sortable/client.aspx", text: "客户端" },
-            { url: "dotnetdemos/grid/sortable/server.aspx", text: "服务器" }
-	    ]
-        },
-        { isexpand: "true", text: "树表格", children: [
-		    { url: "dotnetdemos/grid/treegrid/tree.aspx", text: "树表格" }, 
-		    { url: "dotnetdemos/grid/treegrid/tree2.aspx", text: "树表格2" }
-	    ]
-        }
+    { isexpand: "false", text: "Thor", children: [
+		{ url: "ad/adtest.jsp", text: "广告测试" }
     ]
     }
 ];
