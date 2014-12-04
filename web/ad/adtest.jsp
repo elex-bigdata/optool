@@ -15,7 +15,7 @@
 
     $(function ()
     {
-        loadProjects();
+        loadAds();
         $('#ads').change(query());
     })
 
@@ -58,7 +58,7 @@
     <br/>
     <br/>
 
-    <div id="content" style="height:500px;width: 400px;background: #000000;color: #ffffff" >
+    <div id="content" style="height:500px;width: 400px;" >
 
     </div>
 
