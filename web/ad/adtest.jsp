@@ -30,7 +30,7 @@
                 for(var k in data){
                     $('#ads').append("<option value='"+ k +"'>" + data[k] +"</option>");
                 }
-                $('#ads').live('change', query());
+                $('#ads').on('change', query());
             }
         });
     }
