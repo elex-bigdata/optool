@@ -28,7 +28,7 @@
             success:function(data){
                 $('#ads').empty();
                 for(var k in data){
-                    $("<option value='"+ k +" onchange='query()'>" + data[k] +"</option>").appendTo('#ads');
+                    $("<option value='"+ k +"' onchange='query()'>" + data[k] +"</option>").appendTo('#ads');
                 }
                 $('#ads').change(query());
             }
