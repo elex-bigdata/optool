@@ -38,12 +38,8 @@
     function query(){
         var id = $("#ads").val();
         console.info("change " + id );
-        if(!id){
-            return;
-        }
 
         $('#ad').attr("src","ad?action=adtest&id="+id);
-        $('#ad').reload();
     }
 
 </script>
