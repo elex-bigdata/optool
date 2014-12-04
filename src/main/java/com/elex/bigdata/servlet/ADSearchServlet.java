@@ -41,6 +41,7 @@ public class ADSearchServlet extends HttpServlet {
             ThorService ts = new ThorService();
             try {
                 String code = ts.getCodeByID(adid);
+                req.setAttribute("code",code);
                 req.getRequestDispatcher("ad/ad.jsp").forward(req,resp);
 //                writeJson(,resp);
             } catch (Exception e) {
