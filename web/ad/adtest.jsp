@@ -38,18 +38,14 @@
                 for(var k in data){
                     $('#ads').append("<option value='"+ k +"'>" + data[k] +"</option>");
                 }
-                $('#ads').on('change', function(e){
 
-                });
                 $('#ads').change(function(e){
                     var id = $("#ads").val();
                     console.info("change " + id );
 
                     $('#ad').attr("src","ad?action=adtest&id="+id);
                 });
-                $('#ads').live("change", function(e){
-                    console.info(" live ")
-                });
+
             }
         });
     }
@@ -58,7 +54,7 @@
 </script>
 
 <body>
-    广告列表：<select type="text" id="ads" name="ads" style="width: 300px"></select>
+    广告列表：<select type="text" id="ads" name="ads" style="width: 400px"></select>
     <input type="button" value="测试" onclick="query()"/> <br/>
     <br/>
     <br/>
