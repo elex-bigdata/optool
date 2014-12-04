@@ -30,7 +30,15 @@
                 for(var k in data){
                     $('#ads').append("<option value='"+ k +"'>" + data[k] +"</option>");
                 }
-                $('#ads').on('change', query());
+                $('#ads').on('change', function(e){
+                    console.info(" on change ")
+                });
+                $('#ads').change(function(e){
+                    console.info(" change ggg ")
+                });
+                $('#ads').live("change", function(e){
+                    console.info(" live ")
+                });
             }
         });
     }
