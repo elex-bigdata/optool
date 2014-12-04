@@ -28,7 +28,6 @@
             success:function(data){
                 $('#ads').empty();
                 for(var k in data){
-                    console.info(data[k] + ":" + k);
                     $("<option value='"+ k +"'>" + data[k] +"</option>").appendTo('#ads');
                 }
                 $('#ads').change(query());
@@ -37,24 +36,13 @@
     }
 
     function query(){
-
         var id = $("#ads").val();
-
+        console.info("change " + id );
         if(!id){
             return;
         }
 
         $('#ad').attr("src","ad?action=adtest&id="+id).reload();
-
-/*        $("#content").html("");
-        $.ajax({
-            type: 'POST',
-            url:"ad",
-            data:'action=adtest&id=' + id,
-            success: function(msg){
-                $("#content").html(msg);
-            }
-        });*/
     }
 
 </script>
