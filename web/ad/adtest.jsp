@@ -28,9 +28,9 @@
             success:function(data){
                 $('#ads').empty();
                 for(var k in data){
-                    $('#ads').append("<option value='"+ k +"' onchange='query()'>" + data[k] +"</option>");
+                    $('#ads').append("<option value='"+ k +"'>" + data[k] +"</option>");
                 }
-                $('#ads').change(query());
+                $('#ads').live('change', query());
             }
         });
     }
