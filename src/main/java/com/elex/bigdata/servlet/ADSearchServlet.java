@@ -1,6 +1,9 @@
 package com.elex.bigdata.servlet;
 
 import com.elex.bigdata.service.ADSearchService;
+import com.elex.bigdata.service.OpService;
+import com.elex.bigdata.service.ThorService;
+import com.elex.bigdata.util.Constant;
 import com.elex.bigdata.util.MetricMapping;
 import com.google.gson.Gson;
 
@@ -33,6 +36,21 @@ public class ADSearchServlet extends HttpServlet {
             countHit(req,resp);
         }else if("prj".equals(req.getParameter("action"))){
             getProject(resp);
+        }else if("adtest".equals(req.getParameter("action"))){
+            int adid = Integer.parseInt(req.getParameter("id"));
+            ThorService ts = new ThorService();
+            try {
+                writeJson(ts.getCodeByID(adid),resp);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if("ads".equals(req.getParameter("action"))){
+            ThorService ts = new ThorService();
+            try {
+                writeJson(ts.getADs(),resp);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -81,6 +99,16 @@ public class ADSearchServlet extends HttpServlet {
             pw.write(result + ",total:" + count);
             pw.close();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeJson(Object result, HttpServletResponse resp){
+        try {
+            PrintWriter pw = new PrintWriter(resp.getOutputStream());
+            pw.write(Constant.gson.toJson(result));
+            pw.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

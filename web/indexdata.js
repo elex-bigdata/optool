@@ -20,10 +20,9 @@
 
 var indexdata2 =
 [
-    { isexpand: "false", text: "表格", children: [
+    { isexpand: "false", text: "Thor", children: [
         { isexpand: "false", text: "可排序", children: [
-		    { url: "dotnetdemos/grid/sortable/client.aspx", text: "客户端" },
-            { url: "dotnetdemos/grid/sortable/server.aspx", text: "服务器" }
+		    { url: "ad/adtest.jsp", text: "广告测试" }
 	    ]
         },
         { isexpand: "true", text: "树表格", children: [
