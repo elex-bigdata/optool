@@ -16,7 +16,7 @@
     $(function ()
     {
         loadAds();
-        $('#ads').change(query());
+
     })
 
     function loadAds(){
@@ -31,7 +31,7 @@
                     console.info(data[k] + ":" + k);
                     $("<option value='"+ k +"'>" + data[k] +"</option>").appendTo('#ads');
                 }
-                console.info(data);
+                $('#ads').change(query());
             }
         });
     }
@@ -44,7 +44,9 @@
             return;
         }
 
-        $("#content").html("");
+        $('#ad').attr("src","op/ad?action=adtest&id="+id);
+
+/*        $("#content").html("");
         $.ajax({
             type: 'POST',
             url:"ad",
@@ -52,7 +54,7 @@
             success: function(msg){
                 $("#content").html(msg);
             }
-        });
+        });*/
     }
 
 </script>
@@ -62,9 +64,8 @@
     <br/>
     <br/>
 
-    <div id="content" style="height:500px;width: 400px;" >
-
-    </div>
+    <iframe src="" id="ad" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" allowtransparency="true" width="300" height="250">
+    </iframe>
 
 </body>
 </html>
