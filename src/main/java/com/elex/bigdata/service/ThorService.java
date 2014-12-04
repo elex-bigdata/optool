@@ -55,6 +55,6 @@ public class ThorService {
         } finally {
             MySQLManager.close(rs, stmt, conn);
         }
-        return null;
+        return result;
     }
 }
