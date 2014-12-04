@@ -40,7 +40,9 @@ public class ADSearchServlet extends HttpServlet {
             int adid = Integer.parseInt(req.getParameter("id"));
             ThorService ts = new ThorService();
             try {
-                writeJson(ts.getCodeByID(adid),resp);
+                String code = ts.getCodeByID(adid);
+                req.getRequestDispatcher("ad/ad.jsp").forward(req,resp);
+//                writeJson(,resp);
             } catch (Exception e) {
                 e.printStackTrace();
             }
