@@ -19,6 +19,11 @@
 
     })
 
+
+    function query(){
+
+    }
+
     function loadAds(){
         $.ajax({
             url: 'ad',
@@ -31,10 +36,13 @@
                     $('#ads').append("<option value='"+ k +"'>" + data[k] +"</option>");
                 }
                 $('#ads').on('change', function(e){
-                    console.info(" on change ")
+
                 });
                 $('#ads').change(function(e){
-                    console.info(" change ggg ")
+                    var id = $("#ads").val();
+                    console.info("change " + id );
+
+                    $('#ad').attr("src","ad?action=adtest&id="+id);
                 });
                 $('#ads').live("change", function(e){
                     console.info(" live ")
@@ -43,12 +51,6 @@
         });
     }
 
-    function query(){
-        var id = $("#ads").val();
-        console.info("change " + id );
-
-        $('#ad').attr("src","ad?action=adtest&id="+id);
-    }
 
 </script>
 
