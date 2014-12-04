@@ -3,6 +3,6 @@
 <head>
 </head>
 <body style="padding:0; margin:0;">
-<%=code %>
+<%=request.getParameter("code") %>
 </body>
 </html>
