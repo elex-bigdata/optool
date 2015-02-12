@@ -5,6 +5,7 @@ import com.xingcloud.xa.uidmapping.UidMappingUtil;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -181,10 +182,11 @@ class ScanUID implements Callable<List<String[]>>{
                 long truncUid = Utils.truncate(uid);
                 results.put(truncUid, uid + "");
 
+                int len = r.raw().length;
                 if(count.get(truncUid) == null){
                     count.put(truncUid,1);
                 }else{
-                    count.put(truncUid,count.get(truncUid)+1);
+                    count.put(truncUid,count.get(truncUid)+len);
                 }
 
             }
