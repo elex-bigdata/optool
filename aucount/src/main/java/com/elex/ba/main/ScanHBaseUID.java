@@ -182,12 +182,16 @@ class ScanUID implements Callable<List<String[]>>{
                 long truncUid = Utils.truncate(uid);
                 results.put(truncUid, uid + "");
 
-                int len = r.raw().length;
-                if(count.get(truncUid) == null){
-                    count.put(truncUid,1);
-                }else{
-                    count.put(truncUid,count.get(truncUid)+len);
+                if (!r.isEmpty()) {
+                    for(KeyValue kv : r.raw()){
+                        if(count.get(truncUid) == null){
+                            count.put(truncUid,1);
+                        }else{
+                            count.put(truncUid,count.get(truncUid)+1);
+                        }
+                    }
                 }
+
 
             }
         }finally {
